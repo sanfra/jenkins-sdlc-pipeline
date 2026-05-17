@@ -1,0 +1,46 @@
+jenkins:
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+        - id: "admin"
+          password: "admin"
+  authorizationStrategy:
+    loggedInUsersCanDoAnything:
+      allowAnonymousRead: false
+
+credentials:
+  system:
+    domainCredentials:
+      - credentials:
+          - string:
+              scope: GLOBAL
+              id: "sonar-token"
+              description: "SonarQube analysis token"
+              secret: "${SONAR_TOKEN}"
+
+unclassified:
+  sonarGlobalConfiguration:
+    installations:
+      - name: "SonarQube"
+        serverUrl: "${SONAR_HOST_URL}"
+        credentialsId: "sonar-token"
+
+jobs:
+  - script: |
+      pipelineJob('sdlc-pipeline') {
+        description('SDLC governance pipeline — ArchUnit, SonarQube, OWASP, Checkstyle/PMD')
+        definition {
+          cpsScm {
+            scm {
+              git {
+                remote {
+                  url('file:///workspace')
+                }
+                branches('*/main')
+              }
+            }
+            scriptPath('Jenkinsfile')
+          }
+        }
+      }

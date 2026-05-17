@@ -1,0 +1,10 @@
+configuration-as-code
+git
+workflow-aggregator
+pipeline-model-definition
+sonar
+credentials-binding
+job-dsl
+timestamper
+ansicolor
+junit

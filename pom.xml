@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>3.2.5</version>
+    <relativePath/>
+  </parent>
+
+  <groupId>com.example</groupId>
+  <artifactId>jenkins-sdlc-pipeline</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+
+  <properties>
+    <java.version>17</java.version>
+    <archunit.version>1.3.0</archunit.version>
+    <sonar.projectKey>jenkins-sdlc-pipeline</sonar.projectKey>
+    <sonar.qualitygate.wait>true</sonar.qualitygate.wait>
+    <sonar.qualitygate.timeout>300</sonar.qualitygate.timeout>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.tngtech.archunit</groupId>
+      <artifactId>archunit-junit5</artifactId>
+      <version>${archunit.version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+      </plugin>
+
+      <!-- Coverage — runs automatically with mvn test -->
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>prepare-agent</id>
+            <goals><goal>prepare-agent</goal></goals>
+          </execution>
+          <execution>
+            <id>report</id>
+            <phase>test</phase>
+            <goals><goal>report</goal></goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Enforcer — runs in validate phase on every mvn invocation -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>3.4.1</version>
+        <executions>
+          <execution>
+            <id>enforce</id>
+            <goals><goal>enforce</goal></goals>
+            <configuration>
+              <rules>
+                <requireJavaVersion>
+                  <version>[17,)</version>
+                </requireJavaVersion>
+                <requireMavenVersion>
+                  <version>[3.9,)</version>
+                </requireMavenVersion>
+                <bannedDependencies>
+                  <excludes>
+                    <!-- Log4j 1.x — EOL, multiple CVEs -->
+                    <exclude>log4j:log4j</exclude>
+                    <!-- commons-collections before security fix -->
+                    <exclude>commons-collections:commons-collections:[,3.2.2)</exclude>
+                  </excludes>
+                </bannedDependencies>
+                <requireUpperBoundDeps/>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Checkstyle — call explicitly: mvn checkstyle:check -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>3.3.1</version>
+        <configuration>
+          <configLocation>${project.basedir}/checkstyle.xml</configLocation>
+          <failOnViolation>true</failOnViolation>
+          <violationSeverity>error</violationSeverity>
+          <includeTestSourceDirectory>false</includeTestSourceDirectory>
+        </configuration>
+      </plugin>
+
+      <!-- PMD — call explicitly: mvn pmd:check -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <version>3.21.0</version>
+        <configuration>
+          <rulesets>
+            <ruleset>${project.basedir}/pmd-ruleset.xml</ruleset>
+          </rulesets>
+          <failOnViolation>true</failOnViolation>
+          <printFailingErrors>true</printFailingErrors>
+          <targetJdk>17</targetJdk>
+          <includeTests>false</includeTests>
+        </configuration>
+      </plugin>
+
+      <!-- OWASP Dependency-Check — call explicitly: mvn dependency-check:check -->
+      <plugin>
+        <groupId>org.owasp</groupId>
+        <artifactId>dependency-check-maven</artifactId>
+        <version>10.0.3</version>
+        <configuration>
+          <failBuildOnCVSS>7</failBuildOnCVSS>
+          <suppressionFiles>
+            <suppressionFile>${project.basedir}/dependency-check-suppressions.xml</suppressionFile>
+          </suppressionFiles>
+        </configuration>
+      </plugin>
+
+      <!-- SonarQube — call explicitly: mvn sonar:sonar -->
+      <plugin>
+        <groupId>org.sonarsource.scanner.maven</groupId>
+        <artifactId>sonar-maven-plugin</artifactId>
+        <version>4.0.0.4121</version>
+      </plugin>
+    </plugins>
+  </build>
+</project>
