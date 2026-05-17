@@ -20,3 +20,4 @@ RUN jenkins-plugin-cli --plugin-file /usr/share/jenkins/ref/plugins.txt
 COPY casc.yml /opt/jenkins/casc.yml
 
 USER jenkins
+RUN git config --global --add safe.directory /workspace

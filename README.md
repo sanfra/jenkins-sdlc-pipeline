@@ -44,21 +44,21 @@ The application has four layers. ArchUnit verifies these rules on every build:
 
 ## Local setup — step by step
 
-**1. Clone and copy the env file**
+### 1. Clone and copy the env file
 
     git clone https://github.com/sanfra/jenkins-sdlc-pipeline
     cd jenkins-sdlc-pipeline
     cp .env.example .env
 
-**2. Start SonarQube first**
+### 2. Start SonarQube first
 
-    docker compose -f docker/docker-compose.yml up sonarqube postgres -d
+    docker compose up sonarqube postgres -d
 
 Wait until SonarQube is healthy (about 60–90 seconds):
 
-    docker compose -f docker/docker-compose.yml ps
+    docker compose ps
 
-**3. Generate a SonarQube token**
+### 3. Generate a SonarQube token
 
 Open `http://localhost:9000` and log in with `admin` / `admin` (you will be asked to change the password on first login).
 
@@ -68,9 +68,9 @@ Paste it into `.env`:
 
     SONAR_TOKEN=sqa_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
-**4. Start Jenkins**
+### 4. Start Jenkins
 
-    docker compose -f docker/docker-compose.yml up jenkins -d
+    docker compose up jenkins -d
 
 Jenkins starts at `http://localhost:8080`. Log in with `admin` / `admin`.
 
