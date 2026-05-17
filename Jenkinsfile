@@ -19,7 +19,7 @@ pipeline {
     stages {
         stage('Enforcer') {
             steps {
-                sh 'mvn --batch-mode enforcer:enforce'
+                sh 'mvn --batch-mode enforcer:enforce@enforce'
             }
         }
 
