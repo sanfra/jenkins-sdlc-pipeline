@@ -2,6 +2,7 @@ package com.example.arch;
 
 import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
+import com.tngtech.archunit.core.importer.ImportOption;
 import com.tngtech.archunit.lang.ArchRule;
 import org.junit.jupiter.api.Test;
 import org.springframework.stereotype.Repository;
@@ -14,7 +15,9 @@ import static com.tngtech.archunit.library.Architectures.layeredArchitecture;
 class ArchitectureTest {
 
     private static final JavaClasses ALL_CLASSES =
-            new ClassFileImporter().importPackages("com.example");
+            new ClassFileImporter()
+                    .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
+                    .importPackages("com.example");
 
     @Test
     void layering_is_respected() {
