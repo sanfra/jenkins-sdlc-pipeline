@@ -1,0 +1,14 @@
+env: prod
+baseUrl: https://www.sanfra.ai
+
+selenium:
+  browser: chrome
+  headless: true
+  implicitWaitSec: 15
+  pageLoadTimeoutSec: 30
+
+jmeter:
+  threads: 100
+  rampUpSec: 60
+  durationSec: 300
+  throughputGoal: 200

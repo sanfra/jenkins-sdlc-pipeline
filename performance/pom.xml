@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>net.sanfra</groupId>
+  <artifactId>sanfra-performance</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <properties>
+    <ENV>local</ENV>
+    <config.dir>${project.basedir}/../config</config.dir>
+    <jmeter.version>3.8.0</jmeter.version>
+    <snakeyaml.version>2.3</snakeyaml.version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.yaml</groupId>
+      <artifactId>snakeyaml</artifactId>
+      <version>${snakeyaml.version}</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>com.lazerycode.jmeter</groupId>
+        <artifactId>jmeter-maven-plugin</artifactId>
+        <version>${jmeter.version}</version>
+        <executions>
+          <execution>
+            <id>jmeter-tests</id>
+            <phase>verify</phase>
+            <goals><goal>jmeter</goal></goals>
+          </execution>
+          <execution>
+            <id>jmeter-check-results</id>
+            <phase>verify</phase>
+            <goals><goal>results</goal></goals>
+          </execution>
+        </executions>
+        <configuration>
+          <testFilesDirectory>${project.basedir}/src/test/jmeter</testFilesDirectory>
+          <resultsDirectory>${project.build.directory}/jmeter/results</resultsDirectory>
+          <generateReports>true</generateReports>
+          <propertiesUser>
+            <BASE_URL>${baseUrl}</BASE_URL>
+            <THREADS>${threads}</THREADS>
+            <RAMP_UP>${rampUpSec}</RAMP_UP>
+            <DURATION>${durationSec}</DURATION>
+          </propertiesUser>
+          <errorRateThresholdInPercent>5</errorRateThresholdInPercent>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

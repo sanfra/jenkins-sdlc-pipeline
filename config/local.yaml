@@ -1,0 +1,14 @@
+env: local
+baseUrl: http://localhost:5173
+
+selenium:
+  browser: chrome
+  headless: true
+  implicitWaitSec: 10
+  pageLoadTimeoutSec: 20
+
+jmeter:
+  threads: 5
+  rampUpSec: 10
+  durationSec: 60
+  throughputGoal: 10

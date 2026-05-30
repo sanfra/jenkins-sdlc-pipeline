@@ -1,0 +1,14 @@
+env: qa
+baseUrl: https://qa.sanfra.ai
+
+selenium:
+  browser: chrome
+  headless: true
+  implicitWaitSec: 15
+  pageLoadTimeoutSec: 30
+
+jmeter:
+  threads: 20
+  rampUpSec: 30
+  durationSec: 120
+  throughputGoal: 50
