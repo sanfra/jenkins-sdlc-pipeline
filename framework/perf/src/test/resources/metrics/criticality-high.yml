@@ -1,0 +1,12 @@
+# ============================================================
+# Criticality: HIGH — mission-critical, zero tolerance
+# ============================================================
+
+assertions:
+  meanRtMaxMs: 500
+  p95RtMaxMs: 1500
+  p99RtMaxMs: 3000
+  minSuccessPercent: 99
+
+metadata:
+  criticality: high

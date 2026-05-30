@@ -1,0 +1,25 @@
+# ============================================================
+# Environment: DEV — light load, permissive thresholds
+# ============================================================
+
+load:
+  warmup:
+    users: 2
+    duration: 10
+  rampUp:
+    fromUsers: 2
+    toUsers: 5
+    duration: 20
+  plateau:
+    users: 5
+    duration: 60
+  rampDown:
+    fromUsers: 5
+    toUsers: 0
+    duration: 15
+
+assertions:
+  minSuccessPercent: 85
+
+metadata:
+  environment: dev

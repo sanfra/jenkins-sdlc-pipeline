@@ -1,0 +1,26 @@
+# ============================================================
+# Environment: CI — pipeline validation only
+# Minimal load: validates the server responds, not throughput
+# ============================================================
+
+load:
+  warmup:
+    users: 1
+    duration: 5
+  rampUp:
+    fromUsers: 1
+    toUsers: 3
+    duration: 15
+  plateau:
+    users: 3
+    duration: 30
+  rampDown:
+    fromUsers: 3
+    toUsers: 0
+    duration: 10
+
+assertions:
+  minSuccessPercent: 90
+
+metadata:
+  environment: ci

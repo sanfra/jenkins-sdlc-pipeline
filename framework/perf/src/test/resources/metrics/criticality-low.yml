@@ -1,0 +1,11 @@
+# ============================================================
+# Criticality: LOW — informational / portfolio / non-critical
+# ============================================================
+
+assertions:
+  meanRtMaxMs: 3000
+  p95RtMaxMs: 8000
+  minSuccessPercent: 90
+
+metadata:
+  criticality: low

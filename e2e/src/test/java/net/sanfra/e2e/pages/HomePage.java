@@ -2,6 +2,7 @@ package net.sanfra.e2e.pages;
 
 import net.sanfra.e2e.config.TestConfig;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
@@ -18,7 +19,10 @@ public class HomePage extends BasePage {
 
     public void open() {
         driver.get(TestConfig.get().getBaseUrl());
-        // Wait for React to mount — SPA renders asynchronously
+        // 1. Wait for DOM ready
+        wait.until(d -> "complete".equals(
+                ((JavascriptExecutor) d).executeScript("return document.readyState")));
+        // 2. Wait for React to mount
         wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#root > *")));
     }
 

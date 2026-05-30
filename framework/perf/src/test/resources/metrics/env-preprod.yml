@@ -1,0 +1,25 @@
+# ============================================================
+# Environment: PREPROD — full prod load, strict thresholds
+# ============================================================
+
+load:
+  warmup:
+    users: 10
+    duration: 30
+  rampUp:
+    fromUsers: 10
+    toUsers: 100
+    duration: 180
+  plateau:
+    users: 100
+    duration: 600
+  rampDown:
+    fromUsers: 100
+    toUsers: 0
+    duration: 60
+
+assertions:
+  minSuccessPercent: 98
+
+metadata:
+  environment: preprod

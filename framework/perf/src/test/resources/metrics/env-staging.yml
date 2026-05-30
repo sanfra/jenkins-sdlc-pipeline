@@ -1,0 +1,25 @@
+# ============================================================
+# Environment: STAGING — prod-like load, tighter thresholds
+# ============================================================
+
+load:
+  warmup:
+    users: 10
+    duration: 30
+  rampUp:
+    fromUsers: 10
+    toUsers: 50
+    duration: 120
+  plateau:
+    users: 50
+    duration: 300
+  rampDown:
+    fromUsers: 50
+    toUsers: 0
+    duration: 60
+
+assertions:
+  minSuccessPercent: 95
+
+metadata:
+  environment: staging

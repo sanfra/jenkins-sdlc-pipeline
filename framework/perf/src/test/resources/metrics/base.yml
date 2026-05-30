@@ -1,0 +1,32 @@
+# ============================================================
+# Framework metrics — base defaults (all environments, all profiles)
+# Override with: profile-{techProfile}.yml → env-{env}.yml → criticality-{level}.yml
+# ============================================================
+
+load:
+  warmup:
+    users: 5
+    duration: 15
+  rampUp:
+    fromUsers: 5
+    toUsers: 10
+    duration: 60
+  plateau:
+    users: 10
+    duration: 120
+  rampDown:
+    fromUsers: 10
+    toUsers: 0
+    duration: 30
+
+assertions:
+  meanRtMaxMs: 3000
+  p95RtMaxMs: 8000
+  p99RtMaxMs: 12000
+  maxRtMaxMs: 20000
+  minSuccessPercent: 90
+
+metadata:
+  techProfile: generic
+  environment: local
+  criticality: low

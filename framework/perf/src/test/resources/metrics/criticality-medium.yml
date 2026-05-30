@@ -1,0 +1,11 @@
+# ============================================================
+# Criticality: MEDIUM — business operational, degradation impactful
+# ============================================================
+
+assertions:
+  meanRtMaxMs: 1500
+  p95RtMaxMs: 4000
+  minSuccessPercent: 95
+
+metadata:
+  criticality: medium

@@ -1,0 +1,22 @@
+# ============================================================
+# Profile: REST API (Spring Boot, Node, etc.)
+# JSON over HTTP — stateless, higher concurrency expected
+# ============================================================
+
+load:
+  rampUp:
+    toUsers: 50
+    duration: 120
+  plateau:
+    users: 50
+    duration: 300
+
+assertions:
+  meanRtMaxMs: 500
+  p95RtMaxMs: 1500
+  p99RtMaxMs: 3000
+  maxRtMaxMs: 6000
+  minSuccessPercent: 97
+
+metadata:
+  techProfile: rest-api

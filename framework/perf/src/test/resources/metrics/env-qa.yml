@@ -1,0 +1,25 @@
+# ============================================================
+# Environment: QA — moderate load, standard thresholds
+# ============================================================
+
+load:
+  warmup:
+    users: 5
+    duration: 20
+  rampUp:
+    fromUsers: 5
+    toUsers: 20
+    duration: 60
+  plateau:
+    users: 20
+    duration: 180
+  rampDown:
+    fromUsers: 20
+    toUsers: 0
+    duration: 30
+
+assertions:
+  minSuccessPercent: 90
+
+metadata:
+  environment: qa

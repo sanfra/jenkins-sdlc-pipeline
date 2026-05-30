@@ -47,8 +47,8 @@ public class HomePageTest {
 
         driver = new ChromeDriver(options);
         driver.manage().timeouts()
-                .pageLoadTimeout(Duration.ofSeconds(TestConfig.get().getPageLoadTimeoutSec()))
-                .implicitlyWait(Duration.ofSeconds(TestConfig.get().getImplicitWaitSec()));
+                .pageLoadTimeout(Duration.ofSeconds(TestConfig.get().getPageLoadTimeoutSec()));
+        // NOTE: no implicitlyWait — conflicts with WebDriverWait in page objects
 
         homePage = new HomePage(driver);
     }

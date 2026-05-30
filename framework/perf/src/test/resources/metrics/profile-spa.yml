@@ -1,0 +1,14 @@
+# ============================================================
+# Profile: SPA (Single Page Application)
+# Static assets served by a web server — mostly GET, cacheable
+# ============================================================
+
+assertions:
+  meanRtMaxMs: 800
+  p95RtMaxMs: 2000
+  p99RtMaxMs: 4000
+  maxRtMaxMs: 8000
+  minSuccessPercent: 95
+
+metadata:
+  techProfile: spa
