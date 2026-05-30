@@ -54,6 +54,8 @@ services:
     volumes:
       - jenkins_home:/var/jenkins_home
       - .:/workspace:ro
+      - C:/Users/Stefano RUSSO/Documents/src/sanfra-app:/workspace-sanfra:ro
+      - /var/run/docker.sock:/var/run/docker.sock
 
 volumes:
   pg_data:

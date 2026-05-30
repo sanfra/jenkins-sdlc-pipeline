@@ -20,6 +20,8 @@ credentials:
               secret: "${SONAR_TOKEN}"
 
 unclassified:
+  location:
+    url: "http://localhost:8080/"
   sonarGlobalConfiguration:
     installations:
       - name: "SonarQube"
@@ -27,6 +29,23 @@ unclassified:
         credentialsId: "sonar-token"
 
 jobs:
+  - script: |
+      pipelineJob('sanfra-app') {
+        description('CI pipeline — React/Vite/Node.js — unit test, build, SonarQube')
+        definition {
+          cpsScm {
+            scm {
+              git {
+                remote {
+                  url('file:///workspace-sanfra')
+                }
+                branches('*/main')
+              }
+            }
+            scriptPath('Jenkinsfile')
+          }
+        }
+      }
   - script: |
       pipelineJob('sdlc-pipeline') {
         description('SDLC governance pipeline — ArchUnit, SonarQube, OWASP, Checkstyle/PMD')

@@ -3,7 +3,7 @@ FROM jenkins/jenkins:lts-jdk17
 USER root
 
 RUN apt-get update && \
-    apt-get install -y wget curl && \
+    apt-get install -y wget curl nodejs npm && \
     wget -q https://archive.apache.org/dist/maven/maven-3/3.9.6/binaries/apache-maven-3.9.6-bin.tar.gz && \
     tar -xzf apache-maven-3.9.6-bin.tar.gz -C /opt && \
     ln -s /opt/apache-maven-3.9.6/bin/mvn /usr/local/bin/mvn && \
@@ -20,4 +20,5 @@ RUN jenkins-plugin-cli --plugin-file /usr/share/jenkins/ref/plugins.txt
 COPY casc.yml /opt/jenkins/casc.yml
 
 USER jenkins
-RUN git config --global --add safe.directory /workspace
+RUN git config --global --add safe.directory /workspace && \
+    git config --global --add safe.directory /workspace-sanfra

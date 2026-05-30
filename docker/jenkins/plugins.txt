@@ -8,3 +8,5 @@ job-dsl
 timestamper
 ansicolor
 junit
+docker-workflow
+ws-cleanup
