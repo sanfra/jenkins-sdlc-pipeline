@@ -18,6 +18,12 @@ credentials:
               id: "sonar-token"
               description: "SonarQube analysis token"
               secret: "${SONAR_TOKEN}"
+          - usernamePassword:
+              scope: GLOBAL
+              id: "aruba-ftp"
+              description: "Aruba FTP — sanfra.net hosting"
+              username: "${ARUBA_FTP_USER}"
+              password: "${ARUBA_FTP_PASS}"
 
 unclassified:
   location:
