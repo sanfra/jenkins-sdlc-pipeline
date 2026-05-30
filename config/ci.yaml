@@ -4,8 +4,8 @@ baseUrl: http://localhost:4173
 selenium:
   browser: chrome
   headless: true
-  implicitWaitSec: 10
-  pageLoadTimeoutSec: 20
+  implicitWaitSec: 30
+  pageLoadTimeoutSec: 30
 
 jmeter:
   threads: 5

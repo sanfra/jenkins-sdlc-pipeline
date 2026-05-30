@@ -1,23 +1,16 @@
 package net.sanfra.e2e.pages;
 
 import net.sanfra.e2e.config.TestConfig;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 
 public class HomePage extends BasePage {
 
-    @FindBy(css = ".header")
-    private WebElement header;
-
-    @FindBy(css = ".footer")
-    private WebElement footer;
-
-    @FindBy(css = ".logo-btn")
-    private WebElement logoBtn;
-
-    @FindBy(css = ".mobile-menu-wrap button, .hamburger-btn")
-    private WebElement hamburgerBtn;
+    private static final By HEADER   = By.cssSelector(".header");
+    private static final By FOOTER   = By.cssSelector(".footer");
+    private static final By LOGO_BTN = By.cssSelector(".logo-btn");
+    private static final By HAMBURGER = By.cssSelector(".mobile-menu-wrap button");
 
     public HomePage(WebDriver driver) {
         super(driver, TestConfig.get().getImplicitWaitSec());
@@ -27,9 +20,24 @@ public class HomePage extends BasePage {
         driver.get(TestConfig.get().getBaseUrl());
     }
 
-    public boolean isHeaderVisible()    { return header.isDisplayed(); }
-    public boolean isFooterVisible()    { return footer.isDisplayed(); }
-    public boolean isLogoVisible()      { return logoBtn.isDisplayed(); }
-    public boolean isHamburgerVisible() { return hamburgerBtn.isDisplayed(); }
-    public String getTitle()            { return driver.getTitle(); }
+    public boolean isHeaderVisible() {
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(HEADER)).isDisplayed();
+    }
+
+    public boolean isFooterVisible() {
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(FOOTER)).isDisplayed();
+    }
+
+    public boolean isLogoVisible() {
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(LOGO_BTN)).isDisplayed();
+    }
+
+    public boolean isHamburgerVisible() {
+        driver.manage().window().setSize(new org.openqa.selenium.Dimension(390, 844));
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(HAMBURGER)).isDisplayed();
+    }
+
+    public String getTitle() {
+        return driver.getTitle();
+    }
 }

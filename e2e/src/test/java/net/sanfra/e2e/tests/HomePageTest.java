@@ -74,8 +74,7 @@ public class HomePageTest {
     public void testHamburgerVisible() {
         driver.manage().window().setSize(new org.openqa.selenium.Dimension(390, 844));
         homePage.open();
-        Assert.assertTrue(homePage.isHamburgerVisible(),
-                "Hamburger menu should be visible on mobile viewport");
+        Assert.assertTrue(homePage.isHamburgerVisible(), "Hamburger should be visible on 390px viewport");
     }
 
     @AfterMethod
