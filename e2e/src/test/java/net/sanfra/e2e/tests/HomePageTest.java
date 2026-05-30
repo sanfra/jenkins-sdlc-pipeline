@@ -20,12 +20,21 @@ public class HomePageTest {
 
     @BeforeMethod
     public void setUp() {
-        WebDriverManager.chromedriver().setup();
+        String chromeBinary = System.getProperty("chrome.binary", "");
+        if (!chromeBinary.isEmpty()) {
+            System.setProperty("webdriver.chrome.driver",
+                    System.getProperty("chromedriver.path", "/usr/bin/chromedriver"));
+        } else {
+            WebDriverManager.chromedriver().setup();
+        }
 
         ChromeOptions options = new ChromeOptions();
+        if (!chromeBinary.isEmpty()) {
+            options.setBinary(chromeBinary);
+        }
         if (TestConfig.get().isHeadless()) {
             options.addArguments("--headless=new", "--no-sandbox",
-                    "--disable-dev-shm-usage", "--disable-gpu");
+                    "--disable-dev-shm-usage", "--disable-gpu", "--remote-debugging-port=0");
         }
 
         driver = new ChromeDriver(options);
