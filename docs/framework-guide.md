@@ -6,16 +6,17 @@ Framework condiviso per E2E e Performance testing, progettato per essere riusabi
 
 ## Indice
 
-1. [Filosofia e responsabilità](#1-filosofia-e-responsabilità)
-2. [Struttura del framework](#2-struttura-del-framework)
-3. [Pipeline — stage per stage](#3-pipeline--stage-per-stage)
-4. [Configurazione YAML — come funziona il deep merge](#4-configurazione-yaml--come-funziona-il-deep-merge)
-5. [Profili tecnologici](#5-profili-tecnologici)
-6. [Ambienti](#6-ambienti)
-7. [Criticality tiers](#7-criticality-tiers)
-8. [Onboarding di una nuova app](#8-onboarding-di-una-nuova-app)
-9. [Estendere il framework](#9-estendere-il-framework)
-10. [Lezioni apprese](#10-lezioni-apprese)
+1. Filosofia e responsabilità
+2. Struttura del framework
+3. Pipeline — stage per stage
+4. Deployment pipeline — promozione tra ambienti
+5. Configurazione YAML — come funziona il deep merge
+6. Profili tecnologici
+7. Ambienti
+8. Criticality tiers
+9. Onboarding di una nuova app
+10. Estendere il framework
+11. Lezioni apprese
 
 ---
 
@@ -165,7 +166,113 @@ Archivia gli artifact di build e i report di performance in Jenkins per consulta
 
 ---
 
-## 4. Configurazione YAML — come funziona il deep merge
+## 4. Deployment pipeline — promozione tra ambienti
+
+La pipeline non è solo CI — è un **deployment pipeline** completo. Ogni run sa in quale ambiente sta girando (`TARGET_ENV`) e, se tutto passa, propone la promozione all'ambiente successivo.
+
+### Visibilità dell'ambiente
+
+Ogni pipeline mostra un banner esplicito all'inizio:
+
+```text
+╔══════════════════════════════════════════════╗
+║  sanfra-app                                  ║
+║  Environment : CI                            ║
+║  Base URL    : http://localhost:4173         ║
+║  Build       : #14                           ║
+╚══════════════════════════════════════════════╝
+```
+
+`TARGET_ENV` è un parametro Jenkins (`parameters { choice(...) }`) — visibile nell'UI, nei log e nella Stage View.
+
+### Stage condizionali per ambiente
+
+Non tutti gli stage girano in tutti gli ambienti:
+
+| Stage | ci | prod |
+|---|---|---|
+| Setup Environment | ✓ | ✓ |
+| Unit Test | ✓ | ✓ |
+| Static Analysis | ✓ | ✗ già eseguita in ci |
+| Build | ✓ | ✓ |
+| Deploy | preview locale | FTP su www |
+| Smoke Test | ✓ | ✓ |
+| Functional | ✓ | ✗ NRT non su prod |
+| Performance | ✓ | ✗ load test mai su prod |
+| Archive | ✓ | ✓ |
+| Promote | ci → prod | — fine catena |
+
+### Catena di promozione — due modelli
+
+**Caso A — catena completa (app enterprise):**
+
+```text
+commit
+  ↓
+[CI]       build + full test suite        → verde → auto-promuove
+  ↓
+[DEV]      deploy + smoke + functional    → verde → auto-promuove
+  ↓
+[QA]       deploy + smoke + functional    → verde → 🔐 approval
+  ↓
+[STAGING]  deploy + smoke + functional    → verde → 🔐 approval
+  ↓
+[PREPROD]  deploy + smoke + functional    → verde → 🔐 approval
+  ↓
+[PROD]     deploy + smoke
+```
+
+**Caso B — catena ridotta (app pilota / piccola):**
+
+```text
+commit
+  ↓
+[CI]    build + full test suite    → verde → 🔐 approval
+  ↓
+[PROD]  FTP deploy + smoke
+```
+
+Il framework supporta entrambi — la catena è configurabile nel `Promote` stage di ogni app.
+
+### Stage Promote
+
+```groovy
+stage('Promote') {
+    steps {
+        script {
+            def chain = [ci: 'prod']           // configura la catena qui
+            def next  = chain[params.TARGET_ENV]
+
+            if (!next) { return }              // fine catena
+
+            // gate manuale da QA in poi
+            timeout(time: 30, unit: 'MINUTES') {
+                input message: "Deploy su ${next.toUpperCase()}?", ok: 'Promuovi'
+            }
+
+            build job: env.JOB_NAME,
+                  parameters: [string(name: 'TARGET_ENV', value: next)],
+                  wait: false
+        }
+    }
+}
+```
+
+### Credenziali per deploy su ambienti reali
+
+Le credenziali (FTP, SSH, token) **non vanno nel Jenkinsfile né nel deploy YAML**. Vanno configurate in Jenkins:
+
+`Manage Jenkins → Credentials → (global) → Add Credentials → Username with password`
+
+Nel Jenkinsfile si referenziano per ID:
+
+```groovy
+withCredentials([usernamePassword(credentialsId: 'aruba-ftp', ...)]) { ... }
+```
+
+---
+
+## 5. Configurazione YAML — come funziona il deep merge
 
 La configurazione finale è il risultato di quattro livelli sovrapposti, ciascuno dei quali sovrascrive solo i valori che specifica:
 
