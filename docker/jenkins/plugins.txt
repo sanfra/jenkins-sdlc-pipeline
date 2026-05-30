@@ -10,3 +10,4 @@ ansicolor
 junit
 docker-workflow
 ws-cleanup
+pipeline-stage-view
