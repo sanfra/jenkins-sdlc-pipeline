@@ -33,8 +33,16 @@ public class HomePageTest {
             options.setBinary(chromeBinary);
         }
         if (TestConfig.get().isHeadless()) {
-            options.addArguments("--headless=new", "--no-sandbox",
-                    "--disable-dev-shm-usage", "--disable-gpu", "--remote-debugging-port=0");
+            options.addArguments(
+                "--headless=new",
+                "--no-sandbox",
+                "--disable-dev-shm-usage",
+                "--disable-gpu",
+                "--window-size=1920,1080",
+                "--remote-allow-origins=*",
+                "--disable-extensions",
+                "--disable-web-security"
+            );
         }
 
         driver = new ChromeDriver(options);

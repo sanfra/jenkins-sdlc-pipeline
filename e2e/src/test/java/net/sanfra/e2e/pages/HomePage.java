@@ -18,6 +18,8 @@ public class HomePage extends BasePage {
 
     public void open() {
         driver.get(TestConfig.get().getBaseUrl());
+        // Wait for React to mount — SPA renders asynchronously
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#root > *")));
     }
 
     public boolean isHeaderVisible() {
