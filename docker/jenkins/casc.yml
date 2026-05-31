@@ -76,8 +76,8 @@ unclassified:
       - description: "jenkins-monitoring"
         url: "http://influxdb-jenkins:8086"
         credentialsId: "influxdb-token"
-        organization: "${INFLUXDB_JENKINS_ORG}"
-        bucket: "${INFLUXDB_JENKINS_BUCKET}"
+        organization: "${INFLUXDB_ORG}"
+        database: "${INFLUXDB_BUCKET}"
         exposeExceptions: false
   sonarGlobalConfiguration:
     installations:
