@@ -1,7 +1,10 @@
 apiVersion: 1
 
-datasources:
+deleteDatasources:
   - name: InfluxDB-Jenkins
+
+datasources:
+  - name: InfluxDB_Jenkins
     type: influxdb
     access: proxy
     url: http://influxdb-jenkins:8086

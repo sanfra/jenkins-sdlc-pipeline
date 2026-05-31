@@ -29,6 +29,16 @@
   "templating": {
     "list": [
       {
+        "name": "DS_INFLUXDB_JENKINS",
+        "type": "datasource",
+        "pluginId": "influxdb",
+        "query": "influxdb",
+        "refresh": 1,
+        "hide": 2,
+        "current": {},
+        "options": []
+      },
+      {
         "current": { "selected": false, "text": "All", "value": "$__all" },
         "datasource": { "type": "influxdb", "uid": "${DS_INFLUXDB_JENKINS}" },
         "definition": "",

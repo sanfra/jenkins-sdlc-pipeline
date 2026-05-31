@@ -9,3 +9,4 @@ target/
 .classpath
 .project
 .claude/settings.local.json
+todo.md

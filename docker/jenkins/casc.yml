@@ -67,6 +67,12 @@ credentials:
               id: "influxdb-token"
               description: "InfluxDB 2.x API token — Jenkins monitoring"
               secret: "${INFLUXDB_ADMIN_TOKEN}"
+          - usernamePassword:
+              scope: GLOBAL
+              id: "jira-credentials"
+              description: "Jira Cloud — sanfranetstudio.atlassian.net"
+              username: "${JIRA_USER}"
+              password: "${JIRA_API_TOKEN}"
 
 unclassified:
   location:
@@ -84,6 +90,10 @@ unclassified:
       - name: "SonarQube"
         serverUrl: "${SONAR_HOST_URL}"
         credentialsId: "sonar-token"
+  jiraGlobalConfiguration:
+    sites:
+      - url: "${JIRA_BASE_URL}"
+        credentialsId: "jira-credentials"
 
 jobs:
   - script: |
