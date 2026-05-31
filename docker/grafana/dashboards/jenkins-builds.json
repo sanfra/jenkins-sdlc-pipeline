@@ -136,8 +136,8 @@
         "multi": false,
         "name": "build_nr",
         "options": [],
-        "query": "from(bucket: v.defaultBucket)\n  |> range(start: -90d)\n  |> filter(fn: (r) => r._measurement == \"pipeline_run\")\n  |> filter(fn: (r) => r._field == \"build_nr\")\n  |> filter(fn: (r) => r.app == \"${app}\" or \"${app}\" == \"$__all\")\n  |> group()\n  |> distinct(column: \"_value\")\n  |> sort(columns: [\"_value\"], desc: true)\n  |> map(fn: (r) => ({_value: string(v: r._value)}))\n  |> rename(columns: {_value: \"value\"})",
-        "refresh": 2,
+        "query": "from(bucket: v.defaultBucket)\n  |> range(start: -90d)\n  |> filter(fn: (r) => r._measurement == \"pipeline_run\")\n  |> filter(fn: (r) => r._field == \"build_nr\")\n  |> filter(fn: (r) => r.app == \"${app}\" or \"${app}\" == \"$__all\")\n  |> keep(columns: [\"_value\"])\n  |> group()\n  |> distinct(column: \"_value\")\n  |> sort(columns: [\"_value\"], desc: true)\n  |> map(fn: (r) => ({_value: string(v: r._value)}))",
+        "refresh": 1,
         "regex": "",
         "sort": 0,
         "type": "query",
@@ -257,7 +257,7 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB_JENKINS}"
           },
-          "query": "from(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"pipeline_run\")\n  |> filter(fn: (r) => r.env == \"${env}\" or \"${env}\" == \"$__all\")\n  |> filter(fn: (r) => r._field == \"build_nr\")\n  |> map(fn: (r) => ({r with _bnr: string(v: r._value)}))\n  |> filter(fn: (r) => \"${build_nr}\" == \"$__all\" or r._bnr == \"${build_nr}\")\n  |> group(columns: [])\n  |> last()\n  |> map(fn: (r) => ({_time: r._time, _value: if r.result == \"SUCCESS\" then 1 else if r.result == \"FAILURE\" then 2 else if r.result == \"ABORTED\" then 3 else 4}))",
+          "query": "from(bucket: v.defaultBucket)\n  |> range(start: -90d)\n  |> filter(fn: (r) => r._measurement == \"pipeline_run\")\n  |> filter(fn: (r) => r.env == \"${env}\" or \"${env}\" == \"$__all\")\n  |> filter(fn: (r) => r._field == \"build_nr\")\n  |> map(fn: (r) => ({r with _bnr: string(v: r._value)}))\n  |> filter(fn: (r) => \"${build_nr}\" == \"$__all\" or \"${build_nr}\" == \"\" or r._bnr == \"${build_nr}\")\n  |> group(columns: [])\n  |> last()\n  |> map(fn: (r) => ({_time: r._time, _value: if r.result == \"SUCCESS\" then 1 else if r.result == \"FAILURE\" then 2 else if r.result == \"ABORTED\" then 3 else 4}))",
           "refId": "A"
         }
       ]
@@ -318,7 +318,7 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB_JENKINS}"
           },
-          "query": "from(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"pipeline_run\")\n  |> filter(fn: (r) => r.env == \"${env}\" or \"${env}\" == \"$__all\")\n  |> filter(fn: (r) => r._field == \"build_nr\" or r._field == \"duration_ms\")\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |> filter(fn: (r) => \"${build_nr}\" == \"$__all\" or string(v: r.build_nr) == \"${build_nr}\")\n  |> group(columns: [])\n  |> last()\n  |> map(fn: (r) => ({_time: r._time, _value: r.duration_ms}))",
+          "query": "from(bucket: v.defaultBucket)\n  |> range(start: -90d)\n  |> filter(fn: (r) => r._measurement == \"pipeline_run\")\n  |> filter(fn: (r) => r.env == \"${env}\" or \"${env}\" == \"$__all\")\n  |> filter(fn: (r) => r._field == \"build_nr\" or r._field == \"duration_ms\")\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |> filter(fn: (r) => \"${build_nr}\" == \"$__all\" or \"${build_nr}\" == \"\" or string(v: r.build_nr) == \"${build_nr}\")\n  |> group(columns: [])\n  |> last(column: \"duration_ms\")\n  |> map(fn: (r) => ({_time: r._time, _value: r.duration_ms}))",
           "refId": "A"
         }
       ]
