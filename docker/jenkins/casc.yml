@@ -1,4 +1,7 @@
 jenkins:
+  markupFormatter:
+    rawHtml:
+      disableSyntaxHighlighting: false
   securityRealm:
     local:
       allowsSignup: false
