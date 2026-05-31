@@ -1,7 +1,7 @@
-package com.example.service;
+package net.sanfra.pipeline.service;
 
-import com.example.domain.Order;
-import com.example.repository.OrderRepository;
+import net.sanfra.pipeline.domain.Order;
+import net.sanfra.pipeline.repository.OrderRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

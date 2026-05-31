@@ -1,7 +1,7 @@
-package com.example.controller;
+package net.sanfra.pipeline.controller;
 
-import com.example.domain.Order;
-import com.example.service.OrderService;
+import net.sanfra.pipeline.domain.Order;
+import net.sanfra.pipeline.service.OrderService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

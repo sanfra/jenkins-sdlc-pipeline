@@ -1,6 +1,6 @@
-package com.example.repository;
+package net.sanfra.pipeline.repository;
 
-import com.example.domain.Order;
+import net.sanfra.pipeline.domain.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

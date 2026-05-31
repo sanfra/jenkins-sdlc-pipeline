@@ -1,4 +1,4 @@
-package com.example.domain;
+package net.sanfra.pipeline.domain;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

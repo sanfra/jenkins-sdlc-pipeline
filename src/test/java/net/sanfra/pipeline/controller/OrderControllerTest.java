@@ -1,7 +1,7 @@
-package com.example.controller;
+package net.sanfra.pipeline.controller;
 
-import com.example.domain.Order;
-import com.example.service.OrderService;
+import net.sanfra.pipeline.domain.Order;
+import net.sanfra.pipeline.service.OrderService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;

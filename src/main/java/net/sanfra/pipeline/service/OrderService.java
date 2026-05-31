@@ -1,7 +1,7 @@
-package com.example.service;
+package net.sanfra.pipeline.service;
 
-import com.example.domain.Order;
-import com.example.repository.OrderRepository;
+import net.sanfra.pipeline.domain.Order;
+import net.sanfra.pipeline.repository.OrderRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
