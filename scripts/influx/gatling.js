@@ -71,8 +71,11 @@ write(line('gatling_run', { app, env, simulation }, fields))
 function findStatsJson(dir) {
   if (!fs.existsSync(dir)) return null;
   for (const entry of fs.readdirSync(dir)) {
-    const candidate = path.join(dir, entry, 'stats.json');
-    if (fs.existsSync(candidate)) return candidate;
+    // Gatling 3.x: stats.json lives inside js/ subdirectory
+    const inJs   = path.join(dir, entry, 'js', 'stats.json');
+    if (fs.existsSync(inJs)) return inJs;
+    const inRoot = path.join(dir, entry, 'stats.json');
+    if (fs.existsSync(inRoot)) return inRoot;
   }
   return null;
 }
