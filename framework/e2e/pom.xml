@@ -13,6 +13,8 @@
     <maven.compiler.target>17</maven.compiler.target>
     <junit.version>5.10.2</junit.version>
     <restassured.version>5.4.0</restassured.version>
+    <selenium.version>4.18.1</selenium.version>
+    <webdrivermanager.version>5.8.0</webdrivermanager.version>
   </properties>
 
   <dependencies>
@@ -22,10 +24,24 @@
       <version>${junit.version}</version>
       <scope>test</scope>
     </dependency>
+    <!-- HTTP smoke (RestAssured) -->
     <dependency>
       <groupId>io.rest-assured</groupId>
       <artifactId>rest-assured</artifactId>
       <version>${restassured.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- Browser smoke (Selenium) -->
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-java</artifactId>
+      <version>${selenium.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.github.bonigarcia</groupId>
+      <artifactId>webdrivermanager</artifactId>
+      <version>${webdrivermanager.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -42,11 +58,15 @@
               -Dapp.baseUrl=http://localhost:4173
               -Dapp.healthPath=/
               -Dapp.techProfile=spa
+              -Dchrome.binary=/usr/bin/chromium
+              -Dchromedriver.path=/usr/bin/chromedriver
           -->
           <systemPropertyVariables>
             <app.baseUrl>${app.baseUrl}</app.baseUrl>
             <app.healthPath>${app.healthPath}</app.healthPath>
             <app.techProfile>${app.techProfile}</app.techProfile>
+            <chrome.binary>${chrome.binary}</chrome.binary>
+            <chromedriver.path>${chromedriver.path}</chromedriver.path>
           </systemPropertyVariables>
         </configuration>
       </plugin>
