@@ -14,7 +14,7 @@ services:
       retries: 5
 
   sonarqube:
-    image: sonarqube:lts-community
+    image: sonarqube:community
     depends_on:
       postgres:
         condition: service_healthy
