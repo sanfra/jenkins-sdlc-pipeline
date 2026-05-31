@@ -61,11 +61,58 @@ services:
       VITE_FIREBASE_MESSAGING_SENDER_ID: ${VITE_FIREBASE_MESSAGING_SENDER_ID}
       VITE_FIREBASE_APP_ID: ${VITE_FIREBASE_APP_ID}
       VITE_FIREBASE_MEASUREMENT_ID: ${VITE_FIREBASE_MEASUREMENT_ID}
+      INFLUXDB_URL: http://influxdb-jenkins:8086
+      INFLUXDB_ORG: ${INFLUXDB_JENKINS_ORG}
+      INFLUXDB_BUCKET: ${INFLUXDB_JENKINS_BUCKET}
+      INFLUXDB_ADMIN_TOKEN: ${INFLUXDB_ADMIN_TOKEN}
     volumes:
       - jenkins_home:/var/jenkins_home
       - .:/workspace:ro
       - C:/Users/Stefano RUSSO/Documents/src/sanfra-app:/workspace-sanfra:ro
       - /var/run/docker.sock:/var/run/docker.sock
+
+  influxdb-jenkins:
+    image: influxdb:2.9.0
+    restart: unless-stopped
+    ports:
+      - "8087:8086"
+    environment:
+      DOCKER_INFLUXDB_INIT_MODE: setup
+      DOCKER_INFLUXDB_INIT_USERNAME: admin
+      DOCKER_INFLUXDB_INIT_PASSWORD: ${INFLUXDB_ADMIN_PASSWORD}
+      DOCKER_INFLUXDB_INIT_ORG: ${INFLUXDB_JENKINS_ORG}
+      DOCKER_INFLUXDB_INIT_BUCKET: ${INFLUXDB_JENKINS_BUCKET}
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: ${INFLUXDB_ADMIN_TOKEN}
+      DOCKER_INFLUXDB_INIT_RETENTION: 0
+    volumes:
+      - influxdb_jenkins_data:/var/lib/influxdb2
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8086/health | grep -q '\"status\":\"pass\"' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+
+  grafana-jenkins:
+    image: grafana/grafana:13.0.1
+    restart: unless-stopped
+    depends_on:
+      influxdb-jenkins:
+        condition: service_healthy
+    ports:
+      - "3001:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GF_JENKINS_ADMIN_USER}
+      GF_SECURITY_ADMIN_PASSWORD: ${GF_JENKINS_ADMIN_PASSWORD}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_PATHS_PROVISIONING: /etc/grafana/provisioning
+      GF_INFLUXDB_TOKEN: ${INFLUXDB_ADMIN_TOKEN}
+      INFLUXDB_ORG: ${INFLUXDB_JENKINS_ORG}
+      INFLUXDB_BUCKET: ${INFLUXDB_JENKINS_BUCKET}
+    volumes:
+      - grafana_jenkins_data:/var/lib/grafana
+      - ./docker/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./docker/grafana/dashboards:/var/lib/grafana/dashboards:ro
 
 volumes:
   pg_data:
@@ -73,3 +120,5 @@ volumes:
   sonar_logs:
   sonar_extensions:
   jenkins_home:
+  influxdb_jenkins_data:
+  grafana_jenkins_data:

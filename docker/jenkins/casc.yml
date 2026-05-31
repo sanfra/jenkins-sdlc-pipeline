@@ -62,10 +62,23 @@ credentials:
               id: "vite-firebase-measurement-id"
               description: "Firebase Measurement ID"
               secret: "${VITE_FIREBASE_MEASUREMENT_ID}"
+          - string:
+              scope: GLOBAL
+              id: "influxdb-token"
+              description: "InfluxDB 2.x API token — Jenkins monitoring"
+              secret: "${INFLUXDB_ADMIN_TOKEN}"
 
 unclassified:
   location:
     url: "http://localhost:8080/"
+  influxDbGlobalConfig:
+    targets:
+      - description: "jenkins-monitoring"
+        url: "http://influxdb-jenkins:8086"
+        credentialsId: "influxdb-token"
+        organization: "${INFLUXDB_JENKINS_ORG}"
+        bucket: "${INFLUXDB_JENKINS_BUCKET}"
+        exposeExceptions: false
   sonarGlobalConfiguration:
     installations:
       - name: "SonarQube"
