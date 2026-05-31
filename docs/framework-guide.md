@@ -469,3 +469,39 @@ Avviare e uccidere il server dentro ogni stage (Smoke, E2E, Performance) crea ri
 ### Artefatti Gatling fuori dal workspace non vengono archiviati
 
 `archiveArtifacts` funziona solo dentro il workspace Jenkins. Copiare i report Gatling da `/tmp/sdlc-framework/.../target/gatling/` in `target/gatling-reports/` prima di archiviarli.
+
+### `jenkins-cli.jar` non persiste dopo `docker compose down`
+
+Il file `/tmp/cli.jar` viene scaricato nel container Jenkins. Il container viene ricreato ad ogni `docker compose down` → `/tmp` è vuoto. Riscaricarlo ogni volta:
+
+```sh
+docker exec jenkins-sdlc-pipeline-jenkins-1 sh -c \
+  'curl -sf http://localhost:8080/jnlpJars/jenkins-cli.jar -o /tmp/cli.jar && \
+   java -jar /tmp/cli.jar -s http://localhost:8080/ -auth admin:admin build sanfra-app -s -v'
+```
+
+### Il primo build dopo rebuild Docker non riconosce i parametri
+
+Dopo un rebuild del container Jenkins, il job perde la definizione dei parametri (non ancora parsata dal nuovo Jenkinsfile). Il primo build va lanciato senza `-p` per fare il discovery. Poi funziona normalmente con `Build with Parameters`.
+
+### Credenziali persistenti via JCasC + .env
+
+Le credenziali Jenkins vanno in `.env` (gitignored) e referenziate in `docker/jenkins/casc.yml` con `${VAR}`. Jenkins le carica ad ogni avvio automaticamente — nessuna configurazione manuale dopo rebuild o riavvio.
+
+```yaml
+# casc.yml
+credentials:
+  system:
+    domainCredentials:
+      - credentials:
+          - usernamePassword:
+              id: "my-credential"
+              username: "${MY_USER}"
+              password: "${MY_PASS}"
+```
+
+```yaml
+# docker-compose.yml jenkins environment section
+MY_USER: ${MY_USER}
+MY_PASS: ${MY_PASS}
+```
