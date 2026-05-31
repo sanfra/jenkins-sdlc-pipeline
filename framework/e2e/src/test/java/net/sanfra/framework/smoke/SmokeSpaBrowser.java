@@ -9,6 +9,7 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
@@ -17,13 +18,18 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Browser-level smoke for tech-profile=spa.
- * Opens a real (headless) Chromium browser and verifies React actually mounts.
- * Catches issues that HTTP-only checks miss: JS errors, blank renders, SW conflicts.
+ *
+ * Verifies that the app actually renders visible UI in a real headless browser.
+ * Catches failures that HTTP-only checks miss: JS errors, crashed async init,
+ * missing env config (Firebase, etc.), CORS failures.
+ *
+ * The key insight: checks happen AFTER async initialization (Firebase, auth state,
+ * worker connections) has had time to complete — not just at initial DOM mount.
  */
 class SmokeSpaBrowser {
 
-    private static final int PAGE_LOAD_TIMEOUT_SEC = 30;
-    private static final int REACT_MOUNT_TIMEOUT_SEC = 15;
+    private static final int PAGE_LOAD_TIMEOUT_SEC  = 30;
+    private static final int VISIBLE_UI_TIMEOUT_SEC = 15;
 
     private WebDriver driver;
     private WebDriverWait wait;
@@ -55,7 +61,7 @@ class SmokeSpaBrowser {
 
         driver = new ChromeDriver(options);
         driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(PAGE_LOAD_TIMEOUT_SEC));
-        wait = new WebDriverWait(driver, Duration.ofSeconds(REACT_MOUNT_TIMEOUT_SEC));
+        wait = new WebDriverWait(driver, Duration.ofSeconds(VISIBLE_UI_TIMEOUT_SEC));
     }
 
     @AfterEach
@@ -64,46 +70,57 @@ class SmokeSpaBrowser {
     }
 
     @Test
-    void react_mounts_and_root_has_content() {
+    void header_is_visible_after_async_init() {
+        // Header uses useAuth() — requires Firebase to have initialized without crashing.
+        // If Firebase config is missing or throws, React unmounts and header never appears.
         driver.get(baseUrl);
 
-        // 1. Wait for document.readyState == 'complete'
         wait.until(d -> "complete".equals(
             ((JavascriptExecutor) d).executeScript("return document.readyState")));
 
-        // 2. Wait for React to mount (#root must have children)
+        // Wait for <header> to be VISIBLE — this requires full async app init
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.tagName("header")));
+        assertTrue(driver.findElement(By.tagName("header")).isDisplayed(),
+            "Header not visible — app likely crashed during async initialization " +
+            "(check for Firebase config errors, missing env vars, CORS failures)");
+    }
+
+    @Test
+    void footer_is_visible() {
+        driver.get(baseUrl);
+        wait.until(d -> "complete".equals(
+            ((JavascriptExecutor) d).executeScript("return document.readyState")));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.tagName("footer")));
+        assertTrue(driver.findElement(By.tagName("footer")).isDisplayed(),
+            "Footer not visible — app did not render completely");
+    }
+
+    @Test
+    void react_root_stable_after_async_init() {
+        // Checks #root still has children AFTER async init (not just at initial mount).
+        // A crashed app loses its DOM children after the error propagates.
+        driver.get(baseUrl);
+
+        wait.until(d -> "complete".equals(
+            ((JavascriptExecutor) d).executeScript("return document.readyState")));
+
+        // Initial mount
         wait.until(d -> {
-            Object count = ((JavascriptExecutor) d)
-                .executeScript("var r = document.getElementById('root'); return r ? r.children.length : 0;");
-            return count instanceof Long && (Long) count > 0;
+            Object c = ((JavascriptExecutor) d)
+                .executeScript("var r=document.getElementById('root');return r?r.children.length:0;");
+            return c instanceof Long && (Long) c > 0;
         });
 
-        var root = driver.findElement(By.id("root"));
-        assertFalse(root.getText().isBlank(),
-            "React #root is empty — app did not mount. Possible causes: JS error, missing Firebase config, CORS.");
-    }
+        // Let async initialization run (Firebase, auth state, worker)
+        try { Thread.sleep(4000); } catch (InterruptedException ignored) {}
 
-    @Test
-    void page_title_is_set() {
-        driver.get(baseUrl);
-        wait.until(d -> !d.getTitle().isBlank());
-        String title = driver.getTitle();
-        assertFalse(title.isBlank(), "Page title should not be blank");
-        assertNotEquals("about:blank", title, "Page did not load correctly");
-    }
-
-    @Test
-    void no_critical_js_error_on_load() {
-        driver.get(baseUrl);
-        wait.until(d -> "complete".equals(
-            ((JavascriptExecutor) d).executeScript("return document.readyState")));
-
-        // Check window.onerror did not fire a critical error
-        // (we inject a listener via executeScript before checking body)
-        Object bodyText = ((JavascriptExecutor) driver)
-            .executeScript("return document.body ? document.body.innerHTML.length : 0;");
-        assertNotNull(bodyText, "document.body is null — page failed to load");
-        assertTrue((Long) bodyText > 100,
-            "document.body has almost no content — React likely failed to render");
+        // Re-check: if the app crashed after async init, root will be empty
+        Object count = ((JavascriptExecutor) driver)
+            .executeScript("var r=document.getElementById('root');return r?r.children.length:0;");
+        assertTrue(
+            count instanceof Long && (Long) count > 0,
+            "React #root lost its content after async initialization — " +
+            "app crashed post-mount (Firebase missing config, CORS error, unhandled promise rejection)"
+        );
     }
 }
