@@ -10,14 +10,46 @@
     }
   ],
   "__requires": [
-    { "type": "grafana", "id": "grafana", "name": "Grafana", "version": "13.0.0" },
-    { "type": "datasource", "id": "influxdb", "name": "InfluxDB", "version": "1.0.0" },
-    { "type": "panel", "id": "timeseries", "name": "Time series", "version": "" },
-    { "type": "panel", "id": "stat", "name": "Stat", "version": "" },
-    { "type": "panel", "id": "piechart", "name": "Pie chart", "version": "" },
-    { "type": "panel", "id": "table", "name": "Table", "version": "" }
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "13.0.0"
+    },
+    {
+      "type": "datasource",
+      "id": "influxdb",
+      "name": "InfluxDB",
+      "version": "1.0.0"
+    },
+    {
+      "type": "panel",
+      "id": "timeseries",
+      "name": "Time series",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "stat",
+      "name": "Stat",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "piechart",
+      "name": "Pie chart",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "table",
+      "name": "Table",
+      "version": ""
+    }
   ],
-  "annotations": { "list": [] },
+  "annotations": {
+    "list": []
+  },
   "description": "Jenkins SDLC Pipeline — build metrics, quality, coverage, performance, deploy",
   "editable": true,
   "fiscalYearStartMonth": 0,
@@ -25,7 +57,11 @@
   "id": null,
   "links": [],
   "schemaVersion": 39,
-  "tags": ["jenkins", "ci", "sdlc"],
+  "tags": [
+    "jenkins",
+    "ci",
+    "sdlc"
+  ],
   "templating": {
     "list": [
       {
@@ -39,8 +75,15 @@
         "options": []
       },
       {
-        "current": { "selected": false, "text": "All", "value": "$__all" },
-        "datasource": { "type": "influxdb", "uid": "${DS_INFLUXDB_JENKINS}" },
+        "current": {
+          "selected": false,
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "influxdb",
+          "uid": "${DS_INFLUXDB_JENKINS}"
+        },
         "definition": "",
         "hide": 0,
         "includeAll": true,
@@ -55,8 +98,15 @@
         "label": "Environment"
       },
       {
-        "current": { "selected": false, "text": "All", "value": "$__all" },
-        "datasource": { "type": "influxdb", "uid": "${DS_INFLUXDB_JENKINS}" },
+        "current": {
+          "selected": false,
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "influxdb",
+          "uid": "${DS_INFLUXDB_JENKINS}"
+        },
         "definition": "",
         "hide": 0,
         "includeAll": true,
@@ -69,395 +119,1757 @@
         "sort": 1,
         "type": "query",
         "label": "App"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "influxdb",
+          "uid": "${DS_INFLUXDB_JENKINS}"
+        },
+        "definition": "",
+        "hide": 0,
+        "includeAll": true,
+        "multi": false,
+        "name": "build_nr",
+        "options": [],
+        "query": "from(bucket: v.defaultBucket)\n  |> range(start: -90d)\n  |> filter(fn: (r) => r._measurement == \"pipeline_run\")\n  |> filter(fn: (r) => r._field == \"build_nr\")\n  |> filter(fn: (r) => r.app == \"${app}\" or \"${app}\" == \"$__all\")\n  |> group()\n  |> distinct(column: \"_value\")\n  |> sort(columns: [\"_value\"], desc: true)\n  |> map(fn: (r) => ({_value: string(v: r._value)}))\n  |> rename(columns: {_value: \"value\"})",
+        "refresh": 2,
+        "regex": "",
+        "sort": 0,
+        "type": "query",
+        "label": "Build #"
       }
     ]
   },
-  "time": { "from": "now-7d", "to": "now" },
+  "time": {
+    "from": "now-7d",
+    "to": "now"
+  },
   "timepicker": {},
   "timezone": "Europe/Rome",
   "title": "Jenkins Builds",
   "uid": "jenkins-builds-v1",
   "version": 1,
   "panels": [
-
     {
       "collapsed": false,
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
       "id": 100,
       "title": "Overview",
       "type": "row"
     },
-
     {
-      "datasource": { "type": "influxdb", "uid": "${DS_INFLUXDB_JENKINS}" },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_JENKINS}"
+      },
       "fieldConfig": {
         "defaults": {
           "mappings": [
-            { "options": { "SUCCESS":  { "color": "green",  "index": 0, "text": "SUCCESS"  } }, "type": "value" },
-            { "options": { "FAILURE":  { "color": "red",    "index": 1, "text": "FAILURE"  } }, "type": "value" },
-            { "options": { "ABORTED":  { "color": "orange", "index": 2, "text": "ABORTED"  } }, "type": "value" },
-            { "options": { "UNSTABLE": { "color": "yellow", "index": 3, "text": "UNSTABLE" } }, "type": "value" }
+            {
+              "type": "value",
+              "options": {
+                "1": {
+                  "color": "green",
+                  "index": 0,
+                  "text": "SUCCESS"
+                }
+              }
+            },
+            {
+              "type": "value",
+              "options": {
+                "2": {
+                  "color": "red",
+                  "index": 1,
+                  "text": "FAILURE"
+                }
+              }
+            },
+            {
+              "type": "value",
+              "options": {
+                "3": {
+                  "color": "orange",
+                  "index": 2,
+                  "text": "ABORTED"
+                }
+              }
+            },
+            {
+              "type": "value",
+              "options": {
+                "4": {
+                  "color": "yellow",
+                  "index": 3,
+                  "text": "UNSTABLE"
+                }
+              }
+            }
           ],
-          "color": { "mode": "thresholds" },
-          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] }
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
         },
         "overrides": []
       },
-      "gridPos": { "h": 4, "w": 4, "x": 0, "y": 1 },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 0,
+        "y": 1
+      },
       "id": 1,
-      "options": { "colorMode": "background", "graphMode": "none", "justifyMode": "center", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"] } },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        }
+      },
       "title": "Last Build Result",
       "type": "stat",
-      "targets": [{
-        "datasource": { "type": "influxdb", "uid": "${DS_INFLUXDB_JENKINS}" },
-        "query": "from(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"pipeline_run\")\n  |> filter(fn: (r) => r.env == \"${env}\" or \"${env}\" == \"$__all\")\n  |> filter(fn: (r) => r._field == \"build_nr\")\n  |> keep(columns: [\"_time\", \"result\"])\n  |> rename(columns: {result: \"_value\"})\n  |> last()",
-        "refId": "A"
-      }]
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_JENKINS}"
+          },
+          "query": "from(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"pipeline_run\")\n  |> filter(fn: (r) => r.env == \"${env}\" or \"${env}\" == \"$__all\")\n  |> filter(fn: (r) => r._field == \"build_nr\")\n  |> map(fn: (r) => ({r with _bnr: string(v: r._value)}))\n  |> filter(fn: (r) => \"${build_nr}\" == \"$__all\" or r._bnr == \"${build_nr}\")\n  |> group(columns: [])\n  |> last()\n  |> map(fn: (r) => ({_time: r._time, _value: if r.result == \"SUCCESS\" then 1 else if r.result == \"FAILURE\" then 2 else if r.result == \"ABORTED\" then 3 else 4}))",
+          "refId": "A"
+        }
+      ]
     },
-
     {
-      "datasource": { "type": "influxdb", "uid": "${DS_INFLUXDB_JENKINS}" },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_JENKINS}"
+      },
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "thresholds" },
+          "color": {
+            "mode": "thresholds"
+          },
           "unit": "ms",
-          "thresholds": { "mode": "absolute", "steps": [
-            { "color": "green",  "value": null },
-            { "color": "yellow", "value": 120000 },
-            { "color": "red",    "value": 300000 }
-          ]}
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 120000
+              },
+              {
+                "color": "red",
+                "value": 300000
+              }
+            ]
+          }
         },
         "overrides": []
       },
-      "gridPos": { "h": 4, "w": 4, "x": 4, "y": 1 },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 6,
+        "y": 1
+      },
       "id": 2,
-      "options": { "colorMode": "value", "graphMode": "area", "justifyMode": "auto", "reduceOptions": { "calcs": ["lastNotNull"] } },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        }
+      },
       "title": "Last Build Duration",
       "type": "stat",
-      "targets": [{
-        "datasource": { "type": "influxdb", "uid": "${DS_INFLUXDB_JENKINS}" },
-        "query": "from(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"pipeline_run\")\n  |> filter(fn: (r) => r.env == \"${env}\" or \"${env}\" == \"$__all\")\n  |> filter(fn: (r) => r._field == \"duration_ms\")\n  |> last()",
-        "refId": "A"
-      }]
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_JENKINS}"
+          },
+          "query": "from(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"pipeline_run\")\n  |> filter(fn: (r) => r.env == \"${env}\" or \"${env}\" == \"$__all\")\n  |> filter(fn: (r) => r._field == \"build_nr\" or r._field == \"duration_ms\")\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |> filter(fn: (r) => \"${build_nr}\" == \"$__all\" or string(v: r.build_nr) == \"${build_nr}\")\n  |> group(columns: [])\n  |> last()\n  |> map(fn: (r) => ({_time: r._time, _value: r.duration_ms}))",
+          "refId": "A"
+        }
+      ]
     },
-
     {
-      "datasource": { "type": "influxdb", "uid": "${DS_INFLUXDB_JENKINS}" },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_JENKINS}"
+      },
       "fieldConfig": {
-        "defaults": { "color": { "mode": "thresholds" }, "unit": "short",
-          "thresholds": { "mode": "absolute", "steps": [{ "color": "blue", "value": null }] }
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
         },
         "overrides": []
       },
-      "gridPos": { "h": 4, "w": 4, "x": 8, "y": 1 },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 12,
+        "y": 1
+      },
       "id": 3,
-      "options": { "colorMode": "value", "graphMode": "none", "justifyMode": "auto", "reduceOptions": { "calcs": ["count"] } },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "count"
+          ]
+        }
+      },
       "title": "Total Builds",
       "type": "stat",
-      "targets": [{
-        "datasource": { "type": "influxdb", "uid": "${DS_INFLUXDB_JENKINS}" },
-        "query": "from(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"pipeline_run\")\n  |> filter(fn: (r) => r.env == \"${env}\" or \"${env}\" == \"$__all\")\n  |> filter(fn: (r) => r._field == \"build_nr\")",
-        "refId": "A"
-      }]
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_JENKINS}"
+          },
+          "query": "from(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"pipeline_run\")\n  |> filter(fn: (r) => r.env == \"${env}\" or \"${env}\" == \"$__all\")\n  |> filter(fn: (r) => r._field == \"build_nr\")",
+          "refId": "A"
+        }
+      ]
     },
-
     {
-      "datasource": { "type": "influxdb", "uid": "${DS_INFLUXDB_JENKINS}" },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_JENKINS}"
+      },
       "fieldConfig": {
-        "defaults": { "unit": "percentunit" },
+        "defaults": {
+          "unit": "percentunit"
+        },
         "overrides": []
       },
-      "gridPos": { "h": 4, "w": 4, "x": 12, "y": 1 },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 18,
+        "y": 1
+      },
       "id": 4,
-      "options": { "displayLabels": ["percent"], "legend": { "displayMode": "list", "placement": "right" }, "pieType": "pie" },
+      "options": {
+        "displayLabels": [
+          "percent"
+        ],
+        "legend": {
+          "displayMode": "list",
+          "placement": "right"
+        },
+        "pieType": "pie"
+      },
       "title": "Build Success Rate",
       "type": "piechart",
       "targets": [
         {
-          "datasource": { "type": "influxdb", "uid": "${DS_INFLUXDB_JENKINS}" },
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_JENKINS}"
+          },
           "query": "from(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"pipeline_run\")\n  |> filter(fn: (r) => r.env == \"${env}\" or \"${env}\" == \"$__all\")\n  |> filter(fn: (r) => r._field == \"build_nr\")\n  |> filter(fn: (r) => r.result == \"SUCCESS\")\n  |> count()\n  |> map(fn: (r) => ({ r with _value: float(v: r._value) }))",
           "refId": "A"
         },
         {
-          "datasource": { "type": "influxdb", "uid": "${DS_INFLUXDB_JENKINS}" },
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_JENKINS}"
+          },
           "query": "from(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"pipeline_run\")\n  |> filter(fn: (r) => r.env == \"${env}\" or \"${env}\" == \"$__all\")\n  |> filter(fn: (r) => r._field == \"build_nr\")\n  |> filter(fn: (r) => r.result == \"FAILURE\")\n  |> count()\n  |> map(fn: (r) => ({ r with _value: float(v: r._value) }))",
           "refId": "B"
         }
       ]
     },
-
     {
       "collapsed": false,
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 5 },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 18
+      },
       "id": 101,
-      "title": "Build Trends",
+      "title": "Unit Tests",
       "type": "row"
     },
-
     {
-      "datasource": { "type": "influxdb", "uid": "${DS_INFLUXDB_JENKINS}" },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_JENKINS}"
+      },
       "fieldConfig": {
-        "defaults": { "unit": "ms", "color": { "mode": "palette-classic" } },
+        "defaults": {
+          "unit": "ms",
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
         "overrides": []
       },
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 6 },
-      "id": 5,
-      "options": { "legend": { "calcs": ["mean", "max", "last"], "displayMode": "table", "placement": "bottom" }, "tooltip": { "mode": "single" } },
-      "title": "Build Duration Over Time",
-      "type": "timeseries",
-      "targets": [{
-        "datasource": { "type": "influxdb", "uid": "${DS_INFLUXDB_JENKINS}" },
-        "query": "from(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"pipeline_run\")\n  |> filter(fn: (r) => r.env == \"${env}\" or \"${env}\" == \"$__all\")\n  |> filter(fn: (r) => r._field == \"duration_ms\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)",
-        "refId": "A"
-      }]
-    },
-
-    {
-      "datasource": { "type": "influxdb", "uid": "${DS_INFLUXDB_JENKINS}" },
-      "fieldConfig": {
-        "defaults": { "unit": "short", "color": { "mode": "palette-classic" } },
-        "overrides": [
-          { "matcher": { "id": "byName", "options": "passed" }, "properties": [{ "id": "color", "value": { "fixedColor": "green", "mode": "fixed" } }] },
-          { "matcher": { "id": "byName", "options": "failed"  }, "properties": [{ "id": "color", "value": { "fixedColor": "red",   "mode": "fixed" } }] },
-          { "matcher": { "id": "byName", "options": "skipped" }, "properties": [{ "id": "color", "value": { "fixedColor": "blue",  "mode": "fixed" } }] }
-        ]
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 37
       },
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 6 },
-      "id": 6,
-      "options": { "legend": { "calcs": ["last"], "displayMode": "table", "placement": "bottom" }, "tooltip": { "mode": "multi" } },
-      "title": "Unit Test Results Over Time",
+      "id": 5,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "max",
+            "last"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "title": "Build Duration Over Time",
       "type": "timeseries",
       "targets": [
         {
-          "datasource": { "type": "influxdb", "uid": "${DS_INFLUXDB_JENKINS}" },
-          "query": "from(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"test_results\")\n  |> filter(fn: (r) => r.env == \"${env}\" or \"${env}\" == \"$__all\")\n  |> filter(fn: (r) => r.test_type == \"unit\")\n  |> filter(fn: (r) => r._field == \"passed\" or r._field == \"failed\" or r._field == \"skipped\")\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_JENKINS}"
+          },
+          "query": "from(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"pipeline_run\")\n  |> filter(fn: (r) => r.env == \"${env}\" or \"${env}\" == \"$__all\")\n  |> filter(fn: (r) => r._field == \"duration_ms\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)",
           "refId": "A"
         }
       ]
     },
-
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_JENKINS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "passed"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "failed"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "skipped"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 19
+      },
+      "id": 6,
+      "options": {
+        "legend": {
+          "calcs": [
+            "last"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
+      "title": "Unit Test Results Over Time",
+      "type": "timeseries",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_JENKINS}"
+          },
+          "query": "from(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"jenkins_data\")\n  |> filter(fn: (r) => r.project_name == \"${app}\" or \"${app}\" == \"$__all\")\n  |> filter(fn: (r) => r._field == \"tests_total\" or r._field == \"tests_failed\" or r._field == \"tests_skipped\")\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |> map(fn: (r) => ({_time: r._time, passed: r.tests_total - r.tests_failed - r.tests_skipped, failed: r.tests_failed, skipped: r.tests_skipped}))",
+          "refId": "A"
+        }
+      ]
+    },
     {
       "collapsed": false,
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 14 },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 27
+      },
       "id": 102,
       "title": "Code Quality",
       "type": "row"
     },
-
     {
-      "datasource": { "type": "influxdb", "uid": "${DS_INFLUXDB_JENKINS}" },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_JENKINS}"
+      },
       "fieldConfig": {
-        "defaults": { "unit": "percent", "min": 0, "max": 100,
-          "thresholds": { "mode": "absolute", "steps": [
-            { "color": "red", "value": null }, { "color": "yellow", "value": 50 }, { "color": "green", "value": 80 }
-          ]},
-          "color": { "mode": "thresholds" }
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "max": 100,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 50
+              },
+              {
+                "color": "green",
+                "value": 80
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
         },
         "overrides": []
       },
-      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 15 },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 28
+      },
       "id": 7,
-      "options": { "legend": { "calcs": ["last", "mean"], "displayMode": "table", "placement": "bottom" }, "tooltip": { "mode": "single" } },
+      "options": {
+        "legend": {
+          "calcs": [
+            "last",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
       "title": "Coverage Trend (line %)",
       "type": "timeseries",
-      "targets": [{
-        "datasource": { "type": "influxdb", "uid": "${DS_INFLUXDB_JENKINS}" },
-        "query": "from(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"coverage\")\n  |> filter(fn: (r) => r.env == \"${env}\" or \"${env}\" == \"$__all\")\n  |> filter(fn: (r) => r._field == \"line_pct\")\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)",
-        "refId": "A"
-      }]
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_JENKINS}"
+          },
+          "query": "from(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"coverage\")\n  |> filter(fn: (r) => r.env == \"${env}\" or \"${env}\" == \"$__all\")\n  |> filter(fn: (r) => r._field == \"line_pct\")\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)",
+          "refId": "A"
+        }
+      ]
     },
-
     {
-      "datasource": { "type": "influxdb", "uid": "${DS_INFLUXDB_JENKINS}" },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_JENKINS}"
+      },
       "fieldConfig": {
-        "defaults": { "unit": "short", "color": { "mode": "palette-classic" } },
+        "defaults": {
+          "unit": "short",
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
         "overrides": [
-          { "matcher": { "id": "byName", "options": "bugs"           }, "properties": [{ "id": "color", "value": { "fixedColor": "red",    "mode": "fixed" } }] },
-          { "matcher": { "id": "byName", "options": "vulnerabilities"}, "properties": [{ "id": "color", "value": { "fixedColor": "orange", "mode": "fixed" } }] },
-          { "matcher": { "id": "byName", "options": "code_smells"    }, "properties": [{ "id": "color", "value": { "fixedColor": "yellow", "mode": "fixed" } }] }
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "bugs"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "vulnerabilities"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "orange",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "code_smells"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
         ]
       },
-      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 15 },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 28
+      },
       "id": 8,
-      "options": { "legend": { "calcs": ["last"], "displayMode": "table", "placement": "bottom" }, "tooltip": { "mode": "multi" } },
+      "options": {
+        "legend": {
+          "calcs": [
+            "last"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
       "title": "SonarQube Issues Over Time",
       "type": "timeseries",
-      "targets": [{
-        "datasource": { "type": "influxdb", "uid": "${DS_INFLUXDB_JENKINS}" },
-        "query": "from(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"code_quality\")\n  |> filter(fn: (r) => r.env == \"${env}\" or \"${env}\" == \"$__all\")\n  |> filter(fn: (r) => r._field == \"bugs\" or r._field == \"vulnerabilities\" or r._field == \"code_smells\")\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")",
-        "refId": "A"
-      }]
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_JENKINS}"
+          },
+          "query": "from(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"code_quality\")\n  |> filter(fn: (r) => r.env == \"${env}\" or \"${env}\" == \"$__all\")\n  |> filter(fn: (r) => r._field == \"bugs\" or r._field == \"vulnerabilities\" or r._field == \"code_smells\")\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")",
+          "refId": "A"
+        }
+      ]
     },
-
     {
-      "datasource": { "type": "influxdb", "uid": "${DS_INFLUXDB_JENKINS}" },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_JENKINS}"
+      },
       "fieldConfig": {
-        "defaults": { "unit": "percent", "min": 0,
-          "thresholds": { "mode": "absolute", "steps": [
-            { "color": "green", "value": null }, { "color": "yellow", "value": 3 }, { "color": "red", "value": 10 }
-          ]},
-          "color": { "mode": "thresholds" }
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 3
+              },
+              {
+                "color": "red",
+                "value": 10
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
         },
         "overrides": []
       },
-      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 15 },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 28
+      },
       "id": 9,
-      "options": { "legend": { "calcs": ["last", "mean"], "displayMode": "table", "placement": "bottom" }, "tooltip": { "mode": "single" } },
+      "options": {
+        "legend": {
+          "calcs": [
+            "last",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
       "title": "Code Duplications %",
       "type": "timeseries",
-      "targets": [{
-        "datasource": { "type": "influxdb", "uid": "${DS_INFLUXDB_JENKINS}" },
-        "query": "from(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"code_quality\")\n  |> filter(fn: (r) => r.env == \"${env}\" or \"${env}\" == \"$__all\")\n  |> filter(fn: (r) => r._field == \"duplications_pct\")\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)",
-        "refId": "A"
-      }]
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_JENKINS}"
+          },
+          "query": "from(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"code_quality\")\n  |> filter(fn: (r) => r.env == \"${env}\" or \"${env}\" == \"$__all\")\n  |> filter(fn: (r) => r._field == \"duplications_pct\")\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)",
+          "refId": "A"
+        }
+      ]
     },
-
     {
       "collapsed": false,
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 23 },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 69
+      },
       "id": 103,
       "title": "Performance (Gatling)",
       "type": "row"
     },
-
     {
-      "datasource": { "type": "influxdb", "uid": "${DS_INFLUXDB_JENKINS}" },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_JENKINS}"
+      },
       "fieldConfig": {
-        "defaults": { "unit": "ms", "color": { "mode": "palette-classic" } },
+        "defaults": {
+          "unit": "ms",
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
         "overrides": [
-          { "matcher": { "id": "byName", "options": "p95_ms" }, "properties": [{ "id": "color", "value": { "fixedColor": "orange", "mode": "fixed" } }] },
-          { "matcher": { "id": "byName", "options": "p99_ms" }, "properties": [{ "id": "color", "value": { "fixedColor": "red",    "mode": "fixed" } }] },
-          { "matcher": { "id": "byName", "options": "mean_ms"}, "properties": [{ "id": "color", "value": { "fixedColor": "green",  "mode": "fixed" } }] }
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "p95_ms"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "orange",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "p99_ms"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "mean_ms"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
         ]
       },
-      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 24 },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 70
+      },
       "id": 10,
-      "options": { "legend": { "calcs": ["last", "max"], "displayMode": "table", "placement": "bottom" }, "tooltip": { "mode": "multi" } },
+      "options": {
+        "legend": {
+          "calcs": [
+            "last",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
       "title": "Response Time Trend (mean / p95 / p99)",
       "type": "timeseries",
-      "targets": [{
-        "datasource": { "type": "influxdb", "uid": "${DS_INFLUXDB_JENKINS}" },
-        "query": "from(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"gatling_run\")\n  |> filter(fn: (r) => r.env == \"${env}\" or \"${env}\" == \"$__all\")\n  |> filter(fn: (r) => r._field == \"mean_ms\" or r._field == \"p95_ms\" or r._field == \"p99_ms\")\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")",
-        "refId": "A"
-      }]
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_JENKINS}"
+          },
+          "query": "from(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"gatling_run\")\n  |> filter(fn: (r) => r.env == \"${env}\" or \"${env}\" == \"$__all\")\n  |> filter(fn: (r) => r._field == \"mean_ms\" or r._field == \"p95_ms\" or r._field == \"p99_ms\")\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")",
+          "refId": "A"
+        }
+      ]
     },
-
     {
-      "datasource": { "type": "influxdb", "uid": "${DS_INFLUXDB_JENKINS}" },
-      "fieldConfig": {
-        "defaults": { "unit": "reqps", "color": { "mode": "fixed", "fixedColor": "blue" } },
-        "overrides": []
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_JENKINS}"
       },
-      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 24 },
-      "id": 11,
-      "options": { "legend": { "calcs": ["last", "mean"], "displayMode": "table", "placement": "bottom" }, "tooltip": { "mode": "single" } },
-      "title": "Gatling Throughput (req/s)",
-      "type": "timeseries",
-      "targets": [{
-        "datasource": { "type": "influxdb", "uid": "${DS_INFLUXDB_JENKINS}" },
-        "query": "from(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"gatling_run\")\n  |> filter(fn: (r) => r.env == \"${env}\" or \"${env}\" == \"$__all\")\n  |> filter(fn: (r) => r._field == \"throughput_rps\")\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)",
-        "refId": "A"
-      }]
-    },
-
-    {
-      "datasource": { "type": "influxdb", "uid": "${DS_INFLUXDB_JENKINS}" },
       "fieldConfig": {
-        "defaults": { "unit": "percent", "min": 0, "max": 100,
-          "thresholds": { "mode": "absolute", "steps": [
-            { "color": "green", "value": null }, { "color": "yellow", "value": 5 }, { "color": "red", "value": 10 }
-          ]},
-          "color": { "mode": "thresholds" }
+        "defaults": {
+          "unit": "reqps",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "blue"
+          }
         },
         "overrides": []
       },
-      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 24 },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 70
+      },
+      "id": 11,
+      "options": {
+        "legend": {
+          "calcs": [
+            "last",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "title": "Gatling Throughput (req/s)",
+      "type": "timeseries",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_JENKINS}"
+          },
+          "query": "from(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"gatling_run\")\n  |> filter(fn: (r) => r.env == \"${env}\" or \"${env}\" == \"$__all\")\n  |> filter(fn: (r) => r._field == \"throughput_rps\")\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_JENKINS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "max": 100,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 5
+              },
+              {
+                "color": "red",
+                "value": 10
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 70
+      },
       "id": 12,
-      "options": { "legend": { "calcs": ["last", "max"], "displayMode": "table", "placement": "bottom" }, "tooltip": { "mode": "single" } },
+      "options": {
+        "legend": {
+          "calcs": [
+            "last",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
       "title": "Gatling Error Rate %",
       "type": "timeseries",
-      "targets": [{
-        "datasource": { "type": "influxdb", "uid": "${DS_INFLUXDB_JENKINS}" },
-        "query": "from(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"gatling_run\")\n  |> filter(fn: (r) => r.env == \"${env}\" or \"${env}\" == \"$__all\")\n  |> filter(fn: (r) => r._field == \"error_rate_pct\")\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)",
-        "refId": "A"
-      }]
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_JENKINS}"
+          },
+          "query": "from(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"gatling_run\")\n  |> filter(fn: (r) => r.env == \"${env}\" or \"${env}\" == \"$__all\")\n  |> filter(fn: (r) => r._field == \"error_rate_pct\")\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)",
+          "refId": "A"
+        }
+      ]
     },
-
     {
       "collapsed": false,
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 32 },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 45
+      },
       "id": 104,
       "title": "Deploy",
       "type": "row"
     },
-
     {
-      "datasource": { "type": "influxdb", "uid": "${DS_INFLUXDB_JENKINS}" },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_JENKINS}"
+      },
       "fieldConfig": {
         "defaults": {
           "mappings": [
-            { "options": { "SUCCESS": { "color": "green", "index": 0, "text": "SUCCESS" } }, "type": "value" },
-            { "options": { "FAILURE": { "color": "red",   "index": 1, "text": "FAILURE" } }, "type": "value" }
+            {
+              "type": "value",
+              "options": {
+                "1": {
+                  "color": "green",
+                  "index": 0,
+                  "text": "SUCCESS"
+                }
+              }
+            },
+            {
+              "type": "value",
+              "options": {
+                "2": {
+                  "color": "red",
+                  "index": 1,
+                  "text": "FAILURE"
+                }
+              }
+            }
           ],
-          "color": { "mode": "thresholds" },
-          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] }
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
         },
         "overrides": []
       },
-      "gridPos": { "h": 4, "w": 4, "x": 0, "y": 33 },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 0,
+        "y": 46
+      },
       "id": 13,
-      "options": { "colorMode": "background", "graphMode": "none", "justifyMode": "center", "reduceOptions": { "calcs": ["lastNotNull"] } },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        }
+      },
       "title": "Last PROD Deploy Status",
       "type": "stat",
-      "targets": [{
-        "datasource": { "type": "influxdb", "uid": "${DS_INFLUXDB_JENKINS}" },
-        "query": "from(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"deploy\")\n  |> filter(fn: (r) => r.env == \"prod\")\n  |> filter(fn: (r) => r._field == \"artifact_version\")\n  |> keep(columns: [\"_time\", \"status\"])\n  |> rename(columns: {status: \"_value\"})\n  |> last()",
-        "refId": "A"
-      }]
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_JENKINS}"
+          },
+          "query": "from(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"deploy\")\n  |> filter(fn: (r) => r.env == \"prod\")\n  |> filter(fn: (r) => r._field == \"artifact_version\")\n  |> group(columns: [])\n  |> last()\n  |> map(fn: (r) => ({_time: r._time, _value: if r.status == \"SUCCESS\" then 1 else 2}))",
+          "refId": "A"
+        }
+      ]
     },
-
     {
-      "datasource": { "type": "influxdb", "uid": "${DS_INFLUXDB_JENKINS}" },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_JENKINS}"
+      },
       "fieldConfig": {
-        "defaults": { "unit": "short", "color": { "mode": "thresholds" },
-          "thresholds": { "mode": "absolute", "steps": [{ "color": "blue", "value": null }] }
+        "defaults": {
+          "unit": "short",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
         },
         "overrides": []
       },
-      "gridPos": { "h": 4, "w": 4, "x": 4, "y": 33 },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 4,
+        "y": 46
+      },
       "id": 14,
-      "options": { "colorMode": "value", "graphMode": "none", "justifyMode": "auto", "reduceOptions": { "calcs": ["lastNotNull"] } },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        }
+      },
       "title": "Last PROD Artifact Version",
       "type": "stat",
-      "targets": [{
-        "datasource": { "type": "influxdb", "uid": "${DS_INFLUXDB_JENKINS}" },
-        "query": "from(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"deploy\")\n  |> filter(fn: (r) => r.env == \"prod\")\n  |> filter(fn: (r) => r._field == \"artifact_version\")\n  |> last()",
-        "refId": "A"
-      }]
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_JENKINS}"
+          },
+          "query": "from(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"deploy\")\n  |> filter(fn: (r) => r.env == \"prod\")\n  |> filter(fn: (r) => r._field == \"artifact_version\")\n  |> last()",
+          "refId": "A"
+        }
+      ]
     },
-
     {
-      "datasource": { "type": "influxdb", "uid": "${DS_INFLUXDB_JENKINS}" },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_JENKINS}"
+      },
       "fieldConfig": {
-        "defaults": { "color": { "mode": "thresholds" } },
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          }
+        },
         "overrides": [
-          { "matcher": { "id": "byName", "options": "artifact_version" }, "properties": [{ "id": "displayName", "value": "Artifact" }] },
-          { "matcher": { "id": "byName", "options": "duration_ms"      }, "properties": [{ "id": "unit", "value": "ms" }, { "id": "displayName", "value": "Duration" }] },
-          { "matcher": { "id": "byName", "options": "status"           }, "properties": [{ "id": "displayName", "value": "Status" }] },
-          { "matcher": { "id": "byName", "options": "Time"             }, "properties": [{ "id": "displayName", "value": "Deployed At" }] }
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "artifact_version"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Artifact"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "duration_ms"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "ms"
+              },
+              {
+                "id": "displayName",
+                "value": "Duration"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "status"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Status"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Time"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Deployed At"
+              }
+            ]
+          }
         ]
       },
-      "gridPos": { "h": 8, "w": 16, "x": 8, "y": 33 },
+      "gridPos": {
+        "h": 8,
+        "w": 16,
+        "x": 8,
+        "y": 46
+      },
       "id": 15,
-      "options": { "footer": { "show": false }, "showHeader": true, "sortBy": [{ "desc": true, "displayName": "Deployed At" }] },
+      "options": {
+        "footer": {
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Deployed At"
+          }
+        ]
+      },
       "title": "Deploy History",
       "type": "table",
-      "targets": [{
-        "datasource": { "type": "influxdb", "uid": "${DS_INFLUXDB_JENKINS}" },
-        "query": "from(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"deploy\")\n  |> filter(fn: (r) => r._field == \"artifact_version\" or r._field == \"duration_ms\")\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |> keep(columns: [\"_time\", \"app\", \"env\", \"status\", \"artifact_version\", \"duration_ms\"])",
-        "refId": "A"
-      }]
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_JENKINS}"
+          },
+          "query": "from(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"deploy\")\n  |> filter(fn: (r) => r._field == \"artifact_version\" or r._field == \"duration_ms\")\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |> keep(columns: [\"_time\", \"app\", \"env\", \"status\", \"artifact_version\", \"duration_ms\"])",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 54
+      },
+      "id": 105,
+      "title": "Smoke Tests",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_JENKINS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 0,
+        "y": 55
+      },
+      "id": 16,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        }
+      },
+      "title": "Tests Failed (last)",
+      "type": "stat",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_JENKINS}"
+          },
+          "refId": "A",
+          "query": "from(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"jenkins_data\")\n  |> filter(fn: (r) => r.project_name == \"${app}\" or \"${app}\" == \"$__all\")\n  |> filter(fn: (r) => r._field == \"tests_failed\")\n  |> last()"
+        }
+      ]
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_JENKINS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 4,
+        "y": 55
+      },
+      "id": 17,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        }
+      },
+      "title": "Tests Total (last)",
+      "type": "stat",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_JENKINS}"
+          },
+          "refId": "A",
+          "query": "from(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"jenkins_data\")\n  |> filter(fn: (r) => r.project_name == \"${app}\" or \"${app}\" == \"$__all\")\n  |> filter(fn: (r) => r._field == \"tests_total\")\n  |> last()"
+        }
+      ]
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_JENKINS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "passed"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "failed"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "skipped"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 16,
+        "x": 8,
+        "y": 55
+      },
+      "id": 18,
+      "options": {
+        "legend": {
+          "calcs": [
+            "last"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
+      "title": "Test Results Trend (Unit + Smoke combined)",
+      "type": "timeseries",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_JENKINS}"
+          },
+          "refId": "A",
+          "query": "from(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"jenkins_data\")\n  |> filter(fn: (r) => r.project_name == \"${app}\" or \"${app}\" == \"$__all\")\n  |> filter(fn: (r) => r._field == \"tests_total\" or r._field == \"tests_failed\" or r._field == \"tests_skipped\")\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |> map(fn: (r) => ({_time: r._time, passed: r.tests_total - r.tests_failed - r.tests_skipped, failed: r.tests_failed, skipped: r.tests_skipped}))"
+        }
+      ]
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 63
+      },
+      "id": 106,
+      "title": "Functional Tests (Selenium)",
+      "type": "row"
+    },
+    {
+      "gridPos": {
+        "h": 5,
+        "w": 24,
+        "x": 0,
+        "y": 64
+      },
+      "id": 19,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "## Functional / Selenium Tests\n\nThis stage is currently a **stub** — cross-QA-team Selenium scenarios are not yet onboarded.\n\nOnce instrumented, results will be written to the `functional_results` measurement and displayed here.",
+        "mode": "markdown"
+      },
+      "title": "Status",
+      "type": "text"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 36
+      },
+      "id": 108,
+      "title": "Build",
+      "type": "row"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 5
+      },
+      "id": 107,
+      "title": "Security Scan",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_JENKINS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 0,
+        "y": 6
+      },
+      "id": 20,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        }
+      },
+      "title": "Critical CVEs",
+      "type": "stat",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_JENKINS}"
+          },
+          "refId": "A",
+          "query": "from(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"security_scan\")\n  |> filter(fn: (r) => r.app == \"${app}\" or \"${app}\" == \"$__all\")\n  |> filter(fn: (r) => r.env == \"${env}\" or \"${env}\" == \"$__all\")\n  |> filter(fn: (r) => r._field == \"critical\")\n  |> group(columns: [])\n  |> last()"
+        }
+      ]
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_JENKINS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 6,
+        "y": 6
+      },
+      "id": 21,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        }
+      },
+      "title": "High CVEs",
+      "type": "stat",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_JENKINS}"
+          },
+          "refId": "A",
+          "query": "from(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"security_scan\")\n  |> filter(fn: (r) => r.app == \"${app}\" or \"${app}\" == \"$__all\")\n  |> filter(fn: (r) => r.env == \"${env}\" or \"${env}\" == \"$__all\")\n  |> filter(fn: (r) => r._field == \"high\")\n  |> group(columns: [])\n  |> last()"
+        }
+      ]
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_JENKINS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 12,
+        "y": 6
+      },
+      "id": 22,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        }
+      },
+      "title": "Moderate CVEs",
+      "type": "stat",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_JENKINS}"
+          },
+          "refId": "A",
+          "query": "from(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"security_scan\")\n  |> filter(fn: (r) => r.app == \"${app}\" or \"${app}\" == \"$__all\")\n  |> filter(fn: (r) => r.env == \"${env}\" or \"${env}\" == \"$__all\")\n  |> filter(fn: (r) => r._field == \"moderate\")\n  |> group(columns: [])\n  |> last()"
+        }
+      ]
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_JENKINS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "blue",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 18,
+        "y": 6
+      },
+      "id": 23,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        }
+      },
+      "title": "Low CVEs",
+      "type": "stat",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_JENKINS}"
+          },
+          "refId": "A",
+          "query": "from(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"security_scan\")\n  |> filter(fn: (r) => r.app == \"${app}\" or \"${app}\" == \"$__all\")\n  |> filter(fn: (r) => r.env == \"${env}\" or \"${env}\" == \"$__all\")\n  |> filter(fn: (r) => r._field == \"low\")\n  |> group(columns: [])\n  |> last()"
+        }
+      ]
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_JENKINS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "critical"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "high"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "orange",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "moderate"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "low"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 10
+      },
+      "id": 24,
+      "options": {
+        "legend": {
+          "calcs": [
+            "last"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
+      "title": "Security Vulnerabilities Trend",
+      "type": "timeseries",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_JENKINS}"
+          },
+          "refId": "A",
+          "query": "from(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"security_scan\")\n  |> filter(fn: (r) => r.app == \"${app}\" or \"${app}\" == \"$__all\")\n  |> filter(fn: (r) => r.env == \"${env}\" or \"${env}\" == \"$__all\")\n  |> filter(fn: (r) => r._field == \"critical\" or r._field == \"high\" or r._field == \"moderate\" or r._field == \"low\")\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")"
+        }
+      ]
     }
-
   ]
 }
