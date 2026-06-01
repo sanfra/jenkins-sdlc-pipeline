@@ -2043,6 +2043,32 @@
               {
                 "id": "custom.width",
                 "value": 320
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "title": "Open Advisory",
+                    "url": "${__value.text}",
+                    "targetBlank": true
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "title"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Title"
+              },
+              {
+                "id": "custom.width",
+                "value": 400
               }
             ]
           }
@@ -2070,7 +2096,7 @@
             "uid": "${DS_INFLUXDB_JENKINS}"
           },
           "refId": "A",
-          "query": "from(bucket: v.defaultBucket)\n  |> range(start: -90d)\n  |> filter(fn: (r) => r._measurement == \"security_finding\")\n  |> filter(fn: (r) => r.app == \"${app}\" or \"${app}\" == \"$__all\")\n  |> filter(fn: (r) => r.env == \"${env}\" or \"${env}\" == \"$__all\")\n  |> filter(fn: (r) => r._field == \"title\" or r._field == \"url\" or r._field == \"fix_available\" or r._field == \"build_nr\")\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |> sort(columns: [\"_time\"], desc: true)\n  |> keep(columns: [\"_time\", \"package_name\", \"severity\", \"title\", \"url\", \"fix_available\", \"build_nr\"])"
+          "query": "from(bucket: v.defaultBucket)\n  |> range(start: -90d)\n  |> filter(fn: (r) => r._measurement == \"security_finding\")\n  |> filter(fn: (r) => r.app == \"${app}\" or \"${app}\" == \"$__all\")\n  |> filter(fn: (r) => r.env == \"${env}\" or \"${env}\" == \"$__all\")\n  |> filter(fn: (r) => r._field == \"title\" or r._field == \"url\" or r._field == \"fix_available\" or r._field == \"build_nr\")\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |> sort(columns: [\"_time\"], desc: true)\n  |> keep(columns: [\"_time\", \"package_name\", \"severity\", \"title\", \"url\", \"fix_available\", \"build_nr\"])\n  |> group()"
         }
       ]
     }
