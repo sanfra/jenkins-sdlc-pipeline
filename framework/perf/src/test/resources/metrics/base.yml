@@ -30,3 +30,13 @@ metadata:
   techProfile: generic
   environment: local
   criticality: low
+
+# Default scenario: single generic browse, uses -Dapp.paths as path list.
+# Tech-profile YAML (e.g. profile-spa.yml) replaces this array entirely.
+scenarios:
+  - name: generic_browse
+    enabled: true
+    weight: 100
+    pause:
+      min: 500
+      max: 1500

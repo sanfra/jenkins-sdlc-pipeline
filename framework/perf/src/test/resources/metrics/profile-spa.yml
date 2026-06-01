@@ -12,3 +12,32 @@ assertions:
 
 metadata:
   techProfile: spa
+
+# SPA scenarios replace the base generic_browse entirely (array merge = replace).
+# Scenario names must match @scenario tags in features/generic-simulation.feature.
+scenarios:
+  - name: browse_home
+    enabled: true
+    weight: 60
+    paths:
+      - "/"
+    pause:
+      min: 1000
+      max: 2000
+  - name: explore_pages
+    enabled: true
+    weight: 30
+    paths:
+      - "/about"
+      - "/privacy"
+    pause:
+      min: 1500
+      max: 3000
+  - name: contact_visit
+    enabled: true
+    weight: 10
+    paths:
+      - "/contact"
+    pause:
+      min: 2000
+      max: 4000
