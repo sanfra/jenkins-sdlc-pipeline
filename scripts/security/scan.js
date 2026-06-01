@@ -13,6 +13,7 @@
 
 const { execSync } = require('child_process');
 const { write, line } = require('../influx/write');
+const { extractFindings } = require('./findings');
 
 const args  = parseArgs(process.argv.slice(2));
 const tech  = args.tech  || 'node';
@@ -34,16 +35,17 @@ else if (tech === 'java')    vuln = stub('Java — OWASP Dependency Check (not y
 else if (tech === 'dotnet')  vuln = stub('.NET — dotnet list package --vulnerable (not yet configured)');
 else { console.warn(`[security] unknown tech='${tech}' — skipping`); process.exit(0); }
 
-const { critical, high, moderate, low } = vuln;
+const { critical, high, moderate, low, auditJson = {} } = vuln;
 console.log(`[security] critical=${critical}  high=${high}  moderate=${moderate}  low=${low}`);
 
 const gateFailure = level === 'full' && (critical > 0 || high > 0);
+const findingLines = extractFindings(auditJson, { app, env, build });
 
-write(line('security_scan', { app, env, tech }, {
-  build_nr: parseInt(build) || 0,
-  critical, high, moderate, low,
-}))
-  .then(() => console.log('[influx] security_scan OK'))
+write([
+  line('security_scan', { app, env, tech }, { build_nr: parseInt(build) || 0, critical, high, moderate, low }),
+  ...findingLines,
+])
+  .then(() => console.log(`[influx] security_scan OK (${findingLines.length} findings)`))
   .catch(e  => console.warn('[influx] security_scan skipped:', e.message))
   .finally(() => {
     if (gateFailure) {
@@ -62,10 +64,9 @@ function scanNpm() {
   } catch (e) {
     raw = e.stdout || '{}'; // npm audit exits 1 when vulns found — stdout is still valid JSON
   }
-  const v = (parseJson(raw).metadata || {}).vulnerabilities || {};
-  const result = { critical: v.critical||0, high: v.high||0, moderate: v.moderate||0, low: v.low||0 };
+  const auditJson = parseJson(raw);
+  const v = (auditJson.metadata || {}).vulnerabilities || {};
 
-  // informational: outdated packages (proxy for unmaintained libs)
   try {
     execSync('npm outdated', { encoding: 'utf8', stdio: ['pipe', 'pipe', 'ignore'] });
     console.log('[security] All packages up to date.');
@@ -73,12 +74,15 @@ function scanNpm() {
     if (e.stdout) console.log('[security] Outdated packages:\n' + e.stdout);
   }
 
-  return result;
+  return {
+    critical: v.critical||0, high: v.high||0, moderate: v.moderate||0, low: v.low||0,
+    auditJson,
+  };
 }
 
 function stub(name) {
   console.log(`[security] ${name}`);
-  return { critical: 0, high: 0, moderate: 0, low: 0 };
+  return { critical: 0, high: 0, moderate: 0, low: 0, auditJson: {} };
 }
 
 // --- helpers ----------------------------------------------------------------
