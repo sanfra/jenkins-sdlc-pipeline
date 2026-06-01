@@ -249,7 +249,7 @@
           ]
         }
       },
-      "title": "Last Build Result",
+      "title": "Build Result — ${build_nr}",
       "type": "stat",
       "targets": [
         {
@@ -257,7 +257,7 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB_JENKINS}"
           },
-          "query": "from(bucket: v.defaultBucket)\n  |> range(start: -90d)\n  |> filter(fn: (r) => r._measurement == \"pipeline_run\")\n  |> filter(fn: (r) => r.env == \"${env}\" or \"${env}\" == \"$__all\")\n  |> filter(fn: (r) => r._field == \"build_nr\")\n  |> map(fn: (r) => ({r with _bnr: string(v: r._value)}))\n  |> filter(fn: (r) => \"${build_nr}\" == \"$__all\" or \"${build_nr}\" == \"\" or r._bnr == \"${build_nr}\")\n  |> group(columns: [])\n  |> last()\n  |> map(fn: (r) => ({_time: r._time, _value: if r.result == \"SUCCESS\" then 1 else if r.result == \"FAILURE\" then 2 else if r.result == \"ABORTED\" then 3 else 4}))",
+          "query": "from(bucket: v.defaultBucket)\n  |> range(start: -90d)\n  |> filter(fn: (r) => r._measurement == \"pipeline_run\")\n  |> filter(fn: (r) => r.env == \"${env}\" or \"${env}\" == \"$__all\" or \"${build_nr}\" != \"$__all\")\n  |> filter(fn: (r) => r._field == \"build_nr\")\n  |> map(fn: (r) => ({r with _bnr: string(v: r._value)}))\n  |> filter(fn: (r) => \"${build_nr}\" == \"$__all\" or \"${build_nr}\" == \"\" or r._bnr == \"${build_nr}\")\n  |> group(columns: [])\n  |> last()\n  |> map(fn: (r) => ({_time: r._time, _value: if r.result == \"SUCCESS\" then 1 else if r.result == \"FAILURE\" then 2 else if r.result == \"ABORTED\" then 3 else 4}))",
           "refId": "A"
         }
       ]
@@ -310,7 +310,7 @@
           ]
         }
       },
-      "title": "Last Build Duration",
+      "title": "Build Duration — ${build_nr}",
       "type": "stat",
       "targets": [
         {
@@ -318,7 +318,7 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB_JENKINS}"
           },
-          "query": "from(bucket: v.defaultBucket)\n  |> range(start: -90d)\n  |> filter(fn: (r) => r._measurement == \"pipeline_run\")\n  |> filter(fn: (r) => r.env == \"${env}\" or \"${env}\" == \"$__all\")\n  |> filter(fn: (r) => r._field == \"build_nr\" or r._field == \"duration_ms\")\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |> filter(fn: (r) => \"${build_nr}\" == \"$__all\" or \"${build_nr}\" == \"\" or string(v: r.build_nr) == \"${build_nr}\")\n  |> group(columns: [])\n  |> last(column: \"duration_ms\")\n  |> map(fn: (r) => ({_time: r._time, _value: r.duration_ms}))",
+          "query": "from(bucket: v.defaultBucket)\n  |> range(start: -90d)\n  |> filter(fn: (r) => r._measurement == \"pipeline_run\")\n  |> filter(fn: (r) => r.env == \"${env}\" or \"${env}\" == \"$__all\" or \"${build_nr}\" != \"$__all\")\n  |> filter(fn: (r) => r._field == \"build_nr\" or r._field == \"duration_ms\")\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |> filter(fn: (r) => \"${build_nr}\" == \"$__all\" or \"${build_nr}\" == \"\" or string(v: r.build_nr) == \"${build_nr}\")\n  |> group(columns: [])\n  |> last(column: \"duration_ms\")\n  |> map(fn: (r) => ({_time: r._time, _value: r.duration_ms}))",
           "refId": "A"
         }
       ]
@@ -1774,7 +1774,8 @@
         "defaults": {
           "color": {
             "mode": "palette-classic"
-          }
+          },
+          "displayName": "${__field.name}"
         },
         "overrides": [
           {
@@ -1868,6 +1869,91 @@
           },
           "refId": "A",
           "query": "from(bucket: v.defaultBucket)\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"security_scan\")\n  |> filter(fn: (r) => r.app == \"${app}\" or \"${app}\" == \"$__all\")\n  |> filter(fn: (r) => r.env == \"${env}\" or \"${env}\" == \"$__all\")\n  |> filter(fn: (r) => r._field == \"critical\" or r._field == \"high\" or r._field == \"moderate\" or r._field == \"low\")\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")"
+        }
+      ]
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_JENKINS}"
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "_time" },
+            "properties": [
+              { "id": "displayName", "value": "Detected" },
+              { "id": "custom.width", "value": 180 }
+            ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "package_name" },
+            "properties": [
+              { "id": "displayName", "value": "Package" },
+              { "id": "custom.width", "value": 130 }
+            ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "severity" },
+            "properties": [
+              { "id": "custom.width", "value": 95 },
+              { "id": "custom.displayMode", "value": "color-background" },
+              {
+                "id": "mappings",
+                "value": [
+                  { "type": "value", "options": { "critical": { "color": "red",    "index": 0 } } },
+                  { "type": "value", "options": { "high":     { "color": "orange", "index": 1 } } },
+                  { "type": "value", "options": { "moderate": { "color": "yellow", "index": 2 } } },
+                  { "type": "value", "options": { "low":      { "color": "blue",   "index": 3 } } }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "build_nr" },
+            "properties": [
+              { "id": "displayName", "value": "Build #" },
+              { "id": "custom.width", "value": 70 }
+            ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "fix_available" },
+            "properties": [
+              { "id": "displayName", "value": "Fix" },
+              { "id": "custom.width", "value": 65 },
+              { "id": "custom.displayMode", "value": "color-background" },
+              {
+                "id": "mappings",
+                "value": [
+                  { "type": "value", "options": { "1": { "text": "Yes", "color": "green", "index": 0 } } },
+                  { "type": "value", "options": { "0": { "text": "No",  "color": "red",   "index": 1 } } }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "url" },
+            "properties": [
+              { "id": "displayName", "value": "Advisory" },
+              { "id": "custom.width", "value": 320 }
+            ]
+          }
+        ]
+      },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 18 },
+      "id": 25,
+      "options": { "footer": { "show": false }, "showHeader": true },
+      "title": "Security Findings — ${build_nr}",
+      "type": "table",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_JENKINS}"
+          },
+          "refId": "A",
+          "query": "from(bucket: v.defaultBucket)\n  |> range(start: -90d)\n  |> filter(fn: (r) => r._measurement == \"security_finding\")\n  |> filter(fn: (r) => r.app == \"${app}\" or \"${app}\" == \"$__all\")\n  |> filter(fn: (r) => r.env == \"${env}\" or \"${env}\" == \"$__all\")\n  |> filter(fn: (r) => r._field == \"title\" or r._field == \"url\" or r._field == \"fix_available\" or r._field == \"build_nr\")\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |> filter(fn: (r) => \"${build_nr}\" == \"$__all\" or \"${build_nr}\" == \"\" or string(v: r.build_nr) == \"${build_nr}\")\n  |> sort(columns: [\"_time\"], desc: true)\n  |> keep(columns: [\"_time\", \"package_name\", \"severity\", \"title\", \"url\", \"fix_available\", \"build_nr\"])"
         }
       ]
     }
