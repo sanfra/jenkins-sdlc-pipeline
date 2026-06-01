@@ -123,8 +123,8 @@
       {
         "current": {
           "selected": false,
-          "text": "All",
-          "value": "$__all"
+          "text": "",
+          "value": ""
         },
         "datasource": {
           "type": "influxdb",
@@ -137,9 +137,9 @@
         "name": "build_nr",
         "options": [],
         "query": "from(bucket: v.defaultBucket)\n  |> range(start: -90d)\n  |> filter(fn: (r) => r._measurement == \"pipeline_run\")\n  |> filter(fn: (r) => r._field == \"build_nr\")\n  |> keep(columns: [\"_value\"])\n  |> group()\n  |> distinct(column: \"_value\")\n  |> sort(columns: [\"_value\"], desc: true)\n  |> map(fn: (r) => ({build_nr: string(v: r._value), _value: string(v: r._value)}))\n  |> rename(columns: {_value: \"value\"})\n  |> group(columns: [\"build_nr\"])",
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
-        "sort": 0,
+        "sort": 4,
         "type": "query",
         "label": "Build #"
       }
